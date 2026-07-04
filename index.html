@@ -1,738 +1,807 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Legend Gold · Tienda Gamer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexNord — Tienda del Servidor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        borderRadius: { DEFAULT: "9999px" },
-        fontFamily: {
-          heading: ['"Instrument Serif"', 'serif'],
-          body: ['"Barlow"', 'sans-serif'],
-        },
-        colors: {
-          gold: {
-            50:'#FBF4DE', 100:'#F6E9BB', 200:'#EFD98A', 300:'#E8C758',
-            400:'#DFB23B', 500:'#D4AF37', 600:'#B6912A', 700:'#8F701F',
-            800:'#695116', 900:'#43330D'
-          },
-          ink: { 900:'#070809', 800:'#0B0D10', 700:'#101317', 600:'#161A1F', 500:'#1E2329' }
-        }
-      }
-    }
-  }
-</script>
-
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; }
-  html, body { background:#070809; margin:0; padding:0; scroll-behavior:smooth; }
-  body { font-family: 'Barlow', sans-serif; overflow-x:hidden; }
-  ::selection { background: #D4AF37; color:#070809; }
+  :root{
+    --void:#050B14;
+    --panel:#0E1B2C;
+    --panel-2:#16283F;
+    --ice:#7FE3FF;
+    --ice-dim:rgba(127,227,255,.15);
+    --aurora-green:#6FFFB0;
+    --aurora-violet:#B18CFF;
+    --snow:#EAF2FA;
+    --snow-dim:#9FB3C8;
+    --gold:#F4C95D;
+    --danger:#FF6B6B;
+    --radius:6px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--void);
+    color:var(--snow);
+    font-family:'Manrope',sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+  ::selection{background:var(--ice);color:var(--void);}
 
-  ::-webkit-scrollbar{ width:10px; }
-  ::-webkit-scrollbar-track{ background:#0B0D10; }
-  ::-webkit-scrollbar-thumb{ background:#3a3424; border-radius:8px; }
-  ::-webkit-scrollbar-thumb:hover{ background:#D4AF37; }
+  h1,h2,h3,.pixel{
+    font-family:'Silkscreen',monospace;
+    letter-spacing:.5px;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
 
-  /* ---------- LIQUID GLASS ---------- */
-  .liquid-glass {
-    background: rgba(255,255,255,0.01);
-    background-blend-mode: luminosity;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border: none;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
-    position: relative;
-    overflow: hidden;
+  /* ---------- background aurora spine ---------- */
+  #aurora-canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    pointer-events:none;
   }
-  .liquid-glass::before {
-    content: "";
-    position: absolute; inset: 0;
-    border-radius: inherit;
-    padding: 1.4px;
-    background: linear-gradient(180deg,
-      rgba(212,175,55,0.45) 0%,
-      rgba(212,175,55,0.15) 20%,
-      rgba(212,175,55,0) 40%,
-      rgba(212,175,55,0) 60%,
-      rgba(212,175,55,0.15) 80%,
-      rgba(212,175,55,0.45) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
-  .liquid-glass-strong {
-    background: rgba(255,255,255,0.02);
-    background-blend-mode: luminosity;
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: none;
-    box-shadow: 4px 4px 12px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.15);
-    position: relative;
-    overflow: hidden;
-  }
-  .liquid-glass-strong::before {
-    content: "";
-    position: absolute; inset: 0;
-    border-radius: inherit;
-    padding: 1.4px;
-    background: linear-gradient(180deg,
-      rgba(212,175,55,0.6) 0%,
-      rgba(212,175,55,0.25) 20%,
-      rgba(212,175,55,0) 40%,
-      rgba(212,175,55,0) 60%,
-      rgba(212,175,55,0.25) 80%,
-      rgba(212,175,55,0.6) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
+  .stars{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.5) 0, transparent 50%),
+                      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,.4) 0, transparent 50%),
+                      radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,.6) 0, transparent 50%),
+                      radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.35) 0, transparent 50%),
+                      radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,.5) 0, transparent 50%);
+    background-size: 600px 600px;
+    opacity:.8;
   }
 
-  .card-glass {
-    background: rgba(255,255,255,0.025);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(212,175,55,0.18);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.35), inset 0 1px 1px rgba(255,255,255,0.06);
+  .content{position:relative;z-index:1;}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 5vw;
+    background:linear-gradient(to bottom, rgba(5,11,20,.9), rgba(5,11,20,0));
+    backdrop-filter:blur(2px);
+  }
+  .logo{
+    font-size:1.1rem;
+    color:var(--ice);
+    text-shadow:0 0 12px rgba(127,227,255,.5);
+  }
+  .logo span{color:var(--gold);}
+  .nav-links{display:flex;gap:28px;align-items:center;}
+  .nav-links a{
+    color:var(--snow-dim);
+    text-decoration:none;
+    font-size:.78rem;
+    font-family:'JetBrains Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    transition:color .25s;
+  }
+  .nav-links a:hover{color:var(--ice);}
+  .nav-cta{
+    background:var(--ice);
+    color:var(--void)!important;
+    padding:9px 16px;
+    border-radius:var(--radius);
+    font-weight:700;
+  }
+  @media(max-width:800px){ .nav-links a:not(.nav-cta){display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    padding:0 5vw;
+    overflow:hidden;
+  }
+  .hero-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--aurora-green);
+    font-size:.8rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:18px;
+    opacity:.9;
+  }
+  .hero h1{
+    font-size:clamp(2.6rem, 9vw, 6.5rem);
+    line-height:1;
+    color:var(--snow);
+    text-shadow:0 0 30px rgba(127,227,255,.25);
+  }
+  .hero h1 .accent{
+    background:linear-gradient(90deg, var(--ice), var(--aurora-green) 50%, var(--gold));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero p{
+    max-width:560px;
+    margin:24px auto 0;
+    color:var(--snow-dim);
+    font-size:1.05rem;
+    line-height:1.6;
+  }
+  .hero-actions{display:flex;gap:16px;margin-top:38px;flex-wrap:wrap;justify-content:center;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 26px;
+    border-radius:var(--radius);
+    font-family:'JetBrains Mono',monospace;
+    font-size:.85rem;
+    text-decoration:none;
+    font-weight:600;
+    letter-spacing:.5px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .2s, box-shadow .2s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--ice);color:var(--void);box-shadow:0 0 24px rgba(127,227,255,.35);}
+  .btn-ghost{border-color:var(--ice-dim);color:var(--snow);}
+  .btn-gold{background:linear-gradient(135deg, var(--gold), #e0a92f); color:#241b04; box-shadow:0 0 24px rgba(244,201,93,.3);}
+
+  .scroll-hint{
+    position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+    color:var(--snow-dim);font-family:'JetBrains Mono',monospace;font-size:.7rem;
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    letter-spacing:2px;text-transform:uppercase;
+  }
+  .scroll-hint .line{width:1px;height:34px;background:linear-gradient(var(--ice), transparent);}
+
+  /* floating crystal shards in hero */
+  .shard{
+    position:absolute;
+    width:14px;height:14px;
+    background:var(--ice);
+    opacity:.5;
+    clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    filter:drop-shadow(0 0 6px var(--ice));
   }
 
-  .text-gradient-gold {
-    background: linear-gradient(135deg, #F6E9BB 0%, #D4AF37 45%, #8F701F 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  /* ---------- jagged divider (ice chasm) ---------- */
+  .divider{
+    width:100%;
+    height:46px;
+    display:block;
+    position:relative;
+    z-index:2;
   }
 
-  /* ---------- REVEAL ON SCROLL (vanilla, replaces Framer Motion) ---------- */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    filter: blur(6px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out, filter 0.6s ease-out;
+  /* ---------- chamber (generic section wrapper) ---------- */
+  .chamber{
+    position:relative;
+    padding:120px 5vw;
+    max-width:1180px;
+    margin:0 auto;
   }
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0px);
+  .chamber-head{margin-bottom:64px;max-width:640px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    color:var(--ice);
+    font-size:.75rem;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
   }
-  .reveal-word {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(20px);
-    filter: blur(8px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out, filter 0.5s ease-out;
-    margin-right: 0.28em;
+  .eyebrow::before{content:'';width:18px;height:1px;background:var(--ice);}
+  .chamber-head h2{font-size:clamp(1.8rem,4vw,2.8rem);color:var(--snow);margin-bottom:14px;}
+  .chamber-head p{color:var(--snow-dim);line-height:1.7;font-size:1rem;}
+
+  /* ---------- intro / about ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:50px;
+    align-items:center;
   }
-  .reveal-word.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0px);
+  .about-card{
+    background:var(--panel);
+    border:1px solid var(--ice-dim);
+    border-radius:10px;
+    padding:34px;
+  }
+  .about-card p{color:var(--snow-dim);line-height:1.75;margin-bottom:16px;font-size:.98rem;}
+  .stat-row{display:flex;gap:34px;margin-top:26px;flex-wrap:wrap;}
+  .stat b{display:block;font-family:'Silkscreen',monospace;font-size:1.6rem;color:var(--ice);}
+  .stat span{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--snow-dim);text-transform:uppercase;letter-spacing:1px;}
+  .about-visual{
+    aspect-ratio:1/1;
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    border:1px solid var(--ice-dim);
+  }
+  @media(max-width:860px){ .about-grid{grid-template-columns:1fr;} }
+
+  /* ---------- ranks staircase ---------- */
+  .rank-track{
+    display:flex;
+    flex-direction:column;
+    gap:26px;
+  }
+  .rank-card{
+    display:grid;
+    grid-template-columns:100px 1fr auto;
+    gap:28px;
+    align-items:center;
+    background:var(--panel);
+    border:1px solid var(--ice-dim);
+    border-radius:10px;
+    padding:26px 30px;
+    position:relative;
+    overflow:hidden;
+    transform-origin:left center;
+  }
+  .rank-card::before{
+    content:'';
+    position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--tier-color, var(--ice));
+  }
+  .rank-crest{width:84px;height:84px;filter:drop-shadow(0 0 10px var(--tier-glow, rgba(127,227,255,.4)));}
+  .rank-info .rank-name{
+    font-size:1.5rem;color:var(--snow);display:flex;align-items:center;gap:12px;margin-bottom:8px;
+  }
+  .rank-tier-tag{
+    font-family:'JetBrains Mono',monospace;font-size:.62rem;
+    color:var(--tier-color,var(--ice));
+    border:1px solid var(--tier-color, var(--ice));
+    padding:3px 8px;border-radius:20px;letter-spacing:1px;
+  }
+  .rank-info p{color:var(--snow-dim);font-size:.92rem;line-height:1.5;max-width:480px;}
+  .rank-price{text-align:right;}
+  .rank-price .amount{
+    font-family:'Silkscreen',monospace;font-size:1.8rem;color:var(--tier-color, var(--ice));
+    display:block;margin-bottom:10px;
+  }
+  .rank-buy{
+    display:inline-block;padding:11px 20px;border-radius:6px;
+    background:var(--tier-color, var(--ice));color:var(--void);
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;
+    text-decoration:none;white-space:nowrap;
+  }
+  @media(max-width:760px){
+    .rank-card{grid-template-columns:64px 1fr;grid-template-areas:"crest name" "info info" "price price";}
+    .rank-crest{width:56px;height:56px;}
+    .rank-price{text-align:left;margin-top:14px;}
   }
 
-  /* ---------- ANIMATED BACKGROUNDS PER CATEGORY ---------- */
+  /* ---------- claim steps (shared) ---------- */
+  .claim-box{
+    margin-top:60px;
+    background:linear-gradient(135deg, rgba(127,227,255,.06), rgba(177,140,255,.04));
+    border:1px dashed var(--ice-dim);
+    border-radius:10px;
+    padding:32px 34px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:26px;
+  }
+  .claim-step .n{
+    font-family:'Silkscreen',monospace;color:var(--gold);font-size:1.3rem;margin-bottom:8px;
+  }
+  .claim-step p{color:var(--snow-dim);font-size:.88rem;line-height:1.5;}
+  .claim-step strong{color:var(--snow);}
+  @media(max-width:760px){.claim-box{grid-template-columns:1fr;}}
 
-  /* HERO — ARK: ember particles rising + slow amber fog drift */
-  .bg-hero {
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,175,55,0.18), transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(139,69,19,0.25), transparent 60%),
-      linear-gradient(180deg, #0c0a06 0%, #070809 55%, #050505 100%);
+  /* ---------- coins ---------- */
+  .coin-card{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:30px;
+    background:radial-gradient(circle at 20% 20%, rgba(244,201,93,.08), transparent 60%), var(--panel);
+    border:1px solid rgba(244,201,93,.3);
+    border-radius:12px;
+    padding:42px;
   }
-  .bg-hero::after{
-    content:""; position:absolute; inset:-10%;
-    background-image:
-      radial-gradient(circle, rgba(212,175,55,0.5) 0 1px, transparent 1px);
-    background-size: 60px 60px;
-    animation: emberDrift 18s linear infinite;
-    opacity:0.35;
-  }
-  @keyframes emberDrift {
-    0%{ transform:translateY(0) translateX(0); }
-    100%{ transform:translateY(-220px) translateX(40px); }
-  }
-  .fog-layer{
-    position:absolute; inset:0; pointer-events:none;
-    background: linear-gradient(120deg, transparent 30%, rgba(180,130,40,0.06) 50%, transparent 70%);
-    animation: fogDrift 14s ease-in-out infinite alternate;
-  }
-  @keyframes fogDrift{
-    0%{ transform: translateX(-10%) scale(1.1); }
-    100%{ transform: translateX(10%) scale(1.2); }
-  }
+  .coin-left{display:flex;align-items:center;gap:24px;}
+  .coin-icon{width:90px;height:90px;flex-shrink:0;}
+  .coin-left h3{font-size:1.5rem;color:var(--snow);margin-bottom:8px;}
+  .coin-left p{color:var(--snow-dim);font-size:.92rem;max-width:380px;line-height:1.55;}
+  .coin-price{font-family:'Silkscreen',monospace;font-size:2rem;color:var(--gold);}
 
-  /* AMBER section — amber resin drips / glow blobs */
-  .bg-amber-sec{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(180deg, #0a0703 0%, #0B0D10 100%);
+  /* ---------- wallpapers gallery ---------- */
+  .wall-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
   }
-  .blob-amber{
-    position:absolute; border-radius:50%; filter:blur(40px);
-    background: radial-gradient(circle, rgba(217,140,20,0.55), rgba(217,140,20,0) 70%);
-    animation: blobFloat 12s ease-in-out infinite;
+  .wall-card{
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    border:1px solid var(--ice-dim);
+    background:var(--panel);
   }
-  @keyframes blobFloat{
-    0%,100%{ transform: translate(0,0) scale(1); }
-    50%{ transform: translate(30px,-40px) scale(1.15); }
+  .wall-card svg{display:block;width:100%;height:auto;transform:scale(1);}
+  .wall-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 16px;
+    border-top:1px solid var(--ice-dim);
   }
+  .wall-meta span{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--snow-dim);}
+  .wall-dl{
+    background:none;border:1px solid var(--ice);color:var(--ice);
+    font-family:'JetBrains Mono',monospace;font-size:.68rem;
+    padding:7px 12px;border-radius:5px;cursor:pointer;
+    text-decoration:none;
+  }
+  .wall-dl:hover{background:var(--ice);color:var(--void);}
+  @media(max-width:860px){ .wall-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:560px){ .wall-grid{grid-template-columns:1fr;} }
 
-  /* ARKEOTIPOS section — circuit / artifact glyph drift */
-  .bg-arkeo{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(180deg, #070809 0%, #0c0e10 100%);
+  /* ---------- team ---------- */
+  .team-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
   }
-  .bg-arkeo::before{
-    content:"";
-    position:absolute; inset:-20%;
-    background-image:
-      repeating-linear-gradient(0deg, rgba(212,175,55,0.05) 0 1px, transparent 1px 40px),
-      repeating-linear-gradient(90deg, rgba(212,175,55,0.05) 0 1px, transparent 1px 40px);
-    animation: gridShift 20s linear infinite;
+  .team-card{
+    background:var(--panel);
+    border:1px solid var(--ice-dim);
+    border-radius:10px;
+    padding:28px 22px;
+    text-align:center;
   }
-  @keyframes gridShift{
-    0%{ transform: translate(0,0); }
-    100%{ transform: translate(40px,40px); }
+  .team-avatar{
+    width:64px;height:64px;margin:0 auto 16px;
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Silkscreen',monospace;font-size:1.3rem;
   }
+  .team-role{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--ice);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .team-name{font-size:1.1rem;color:var(--snow);}
+  @media(max-width:760px){.team-grid{grid-template-columns:1fr 1fr;}}
 
-  /* LEVELS section — rising XP bars glow */
-  .bg-levels{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(180deg, #070809 0%, #0a0c0e 100%);
+  /* ---------- footer ---------- */
+  footer{
+    padding:70px 5vw 40px;
+    text-align:center;
+    border-top:1px solid var(--ice-dim);
+    position:relative;
+    z-index:1;
   }
-  .bar-rise{
-    position:absolute; bottom:-10%; width:3px;
-    background: linear-gradient(180deg, rgba(212,175,55,0.0), rgba(212,175,55,0.6));
-    animation: riseUp 6s ease-in-out infinite;
-  }
-  @keyframes riseUp{
-    0%{ height:10%; opacity:0.2; }
-    50%{ height:70%; opacity:0.8; }
-    100%{ height:10%; opacity:0.2; }
-  }
+  footer .logo{display:block;margin-bottom:18px;font-size:1.3rem;}
+  footer p{color:var(--snow-dim);font-size:.85rem;max-width:480px;margin:0 auto 26px;line-height:1.6;}
+  footer .foot-links{display:flex;gap:24px;justify-content:center;margin-bottom:30px;flex-wrap:wrap;}
+  footer .foot-links a{color:var(--snow-dim);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+  footer .foot-links a:hover{color:var(--ice);}
+  footer .fine{color:#5c7085;font-size:.72rem;font-family:'JetBrains Mono',monospace;}
 
-  /* CRUNCHYROLL / Entretenimiento — orange/pink anime gradient waves */
-  .bg-anime{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(160deg, #1a0a05 0%, #0B0D10 60%);
-  }
-  .wave-anime{
-    position:absolute; width:200%; height:200%; left:-50%; top:-50%;
-    background: conic-gradient(from 0deg, rgba(255,98,0,0.12), rgba(255,0,110,0.08), rgba(255,98,0,0.12));
-    animation: spinSlow 30s linear infinite;
-    filter: blur(60px);
-  }
-  @keyframes spinSlow{ 100%{ transform: rotate(360deg); } }
-
-  /* FREE FIRE — tactical orange/red diagonal scan */
-  .bg-ff{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(180deg, #160803 0%, #0B0D10 70%);
-  }
-  .scan-ff{
-    position:absolute; inset:-20%;
-    background: repeating-linear-gradient(115deg, rgba(255,140,30,0.07) 0 2px, transparent 2px 26px);
-    animation: scanMove 9s linear infinite;
-  }
-  @keyframes scanMove{
-    0%{ transform: translateX(0); }
-    100%{ transform: translateX(120px); }
-  }
-
-  /* BLOODSTRIKE — crimson pulse grid */
-  .bg-bs{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: linear-gradient(180deg, #150404 0%, #0B0D10 70%);
-  }
-  .pulse-bs{
-    position:absolute; inset:0;
-    background: radial-gradient(circle at 50% 50%, rgba(190,20,20,0.25), transparent 60%);
-    animation: pulseBeat 4s ease-in-out infinite;
-  }
-  @keyframes pulseBeat{
-    0%,100%{ opacity:0.3; transform:scale(1); }
-    50%{ opacity:0.7; transform:scale(1.08); }
-  }
-
-  /* RECARGAS VARIAS / contacto — gold sparkle field */
-  .bg-contact{
-    position:absolute; inset:0; z-index:0; overflow:hidden;
-    background: radial-gradient(ellipse 70% 60% at 50% 30%, rgba(212,175,55,0.15), transparent 65%), #070809;
-  }
-  .sparkle{
-    position:absolute; border-radius:50%;
-    background: #F6E9BB;
-    box-shadow: 0 0 8px 2px rgba(246,233,187,0.8);
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  @keyframes twinkle{
-    0%,100%{ opacity:0.15; transform:scale(0.8); }
-    50%{ opacity:1; transform:scale(1.3); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; }
-  }
-
-  .focus-gold:focus-visible{
-    outline: 2px solid #D4AF37;
-    outline-offset: 3px;
-  }
-
-  .hover-lift {
-    transition: transform 0.3s ease;
-  }
-  .hover-lift:hover {
-    transform: translateY(-4px);
-  }
+  .reveal{opacity:0;}
 </style>
 </head>
 <body>
 
-  <!-- ============ NAVBAR ============ -->
-  <nav class="fixed top-4 left-0 right-0 px-4 sm:px-8 lg:px-16 z-50">
-    <div class="flex items-center justify-between">
-      <a href="#top" class="liquid-glass h-12 w-12 rounded-full flex items-center justify-center shrink-0 focus-gold">
-        <span class="font-heading italic text-gold-200 text-2xl">L</span>
-      </a>
+<div class="stars"></div>
+<svg id="aurora-canvas" viewBox="0 0 1600 3600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="auroraGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7FE3FF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#7FE3FF" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#6FFFB0" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="auroraGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#B18CFF" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#B18CFF" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#F4C95D" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <path id="auroraPath1" fill="url(#auroraGrad1)" d="M0,0 Q400,120 800,40 T1600,80 L1600,0 L0,0 Z"/>
+  <path id="auroraPath2" fill="url(#auroraGrad2)" d="M0,300 Q500,420 900,340 T1600,380 L1600,3600 L0,3600 Z" opacity="0.5"/>
+</svg>
 
-      <div class="hidden md:flex liquid-glass rounded-full px-1.5 py-1.5 items-center gap-1">
-        <a href="#ark" class="px-3 py-2 text-sm font-medium text-white/90 font-body hover:text-gold-300 transition-colors focus-gold">ARK</a>
-        <a href="#entretenimiento" class="px-3 py-2 text-sm font-medium text-white/90 font-body hover:text-gold-300 transition-colors focus-gold">Entretenimiento</a>
-        <a href="#videojuegos" class="px-3 py-2 text-sm font-medium text-white/90 font-body hover:text-gold-300 transition-colors focus-gold">Video Juegos</a>
-        <a href="#contacto" class="px-3 py-2 text-sm font-medium text-white/90 font-body hover:text-gold-300 transition-colors focus-gold">Cotizar</a>
-        <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer"
-           class="rounded-full bg-gold-400 text-ink-900 px-4 py-2 text-sm font-semibold flex items-center gap-1.5 whitespace-nowrap hover:bg-gold-300 transition-colors focus-gold">
-          Hacer pedido
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-      </div>
+<div class="content">
 
-      <button id="menuBtn" class="md:hidden liquid-glass h-12 w-12 rounded-full flex items-center justify-center text-white focus-gold" aria-label="Abrir menú">
-        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-    </div>
+<nav>
+  <div class="logo">Nex<span>Nord</span></div>
+  <div class="nav-links">
+    <a href="#nexnord">El Reino</a>
+    <a href="#rangos">Rangos</a>
+    <a href="#coins">Coins</a>
+    <a href="#fondos">Fondos</a>
+    <a href="#equipo">Equipo</a>
+    <a href="#" class="nav-cta">Discord</a>
+  </div>
+</nav>
 
-    <div id="mobileMenu" class="md:hidden liquid-glass-strong rounded-2xl mt-3 p-4 flex flex-col gap-2 hidden">
-      <a href="#ark" class="px-3 py-2 text-sm font-medium text-white/90 font-body focus-gold">ARK</a>
-      <a href="#entretenimiento" class="px-3 py-2 text-sm font-medium text-white/90 font-body focus-gold">Entretenimiento</a>
-      <a href="#videojuegos" class="px-3 py-2 text-sm font-medium text-white/90 font-body focus-gold">Video Juegos</a>
-      <a href="#contacto" class="px-3 py-2 text-sm font-medium text-white/90 font-body focus-gold">Cotizar</a>
-      <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer" class="rounded-full bg-gold-400 text-ink-900 px-4 py-2 text-sm font-semibold text-center mt-1">
-        Hacer pedido
-      </a>
-    </div>
-  </nav>
+<!-- ================= HERO ================= -->
+<section class="hero" id="inicio">
+  <div class="hero-eyebrow">Servidor de Minecraft · Temporada activa</div>
+  <h1 class="reveal" id="heroTitle">El frío forja<br><span class="accent">reyes.</span></h1>
+  <p class="reveal" id="heroSub">NexNord es un reino congelado donde cada rango es una conquista. Elige tu camino, reclama tus privilegios y deja tu marca en el hielo eterno.</p>
+  <div class="hero-actions reveal" id="heroActions">
+    <a href="#rangos" class="btn btn-primary">Ver rangos ⟶</a>
+    <a href="#coins" class="btn btn-ghost">Recargar coins</a>
+  </div>
+  <div class="scroll-hint"><span>Desciende al reino</span><div class="line"></div></div>
+</section>
 
-  <!-- ============ HERO ============ -->
-  <section id="top" class="relative min-h-screen flex flex-col overflow-hidden">
-    <div class="bg-hero"><div class="fog-layer"></div></div>
-
-    <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 pt-28 pb-10">
-      <div class="reveal liquid-glass rounded-full pl-1 pr-3 py-1 flex items-center gap-2 mb-6">
-        <span class="bg-gold-400 text-ink-900 px-3 py-1 text-xs font-semibold rounded-full">Tienda</span>
-        <span class="text-sm text-white/90 font-body">Tokens, Ámbar y más para ARK: Survival Ascended</span>
-      </div>
-
-      <h1 class="text-5xl md:text-7xl lg:text-[5.5rem] font-heading italic text-white leading-[0.85] max-w-3xl text-center tracking-tight">
-        Domina la <span class="text-gradient-gold">Isla</span> sin esperar nada
-      </h1>
-
-      <p class="reveal mt-5 text-sm md:text-base text-white/80 max-w-xl text-center font-body font-light leading-relaxed">
-        Legend Gold es tu tienda de confianza para recargas de ARK, ámbar, arkeotipos y subida de niveles para tus dinos —
-        además de entretenimiento y recargas para tus juegos favoritos. Pedidos rápidos, atención directa, sin vueltas.
-      </p>
-
-      <div class="reveal flex flex-col sm:flex-row items-center gap-4 mt-8">
-        <a href="#ark" class="liquid-glass-strong rounded-full px-6 py-3 text-sm font-semibold text-gold-200 flex items-center gap-2 hover:text-white transition-colors focus-gold">
-          Ver catálogo ARK
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-        </a>
-        <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer" class="text-sm text-white/80 font-body flex items-center gap-2 hover:text-gold-300 transition-colors focus-gold">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.21.375-.444.875-.608 1.262a18.27 18.27 0 0 0-5.554 0A12.5 12.5 0 0 0 9.115 3 19.74 19.74 0 0 0 4.68 4.37C2.05 8.21 1.32 11.96 1.6 15.66a19.9 19.9 0 0 0 5.99 3.03c.49-.67.92-1.39 1.29-2.14a12.9 12.9 0 0 1-2.03-.97c.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.3 0c.16.14.33.27.5.4-.65.38-1.33.7-2.04.97.37.75.8 1.47 1.29 2.14a19.9 19.9 0 0 0 5.99-3.03c.34-4.3-.7-8.01-2.79-11.29ZM8.68 13.33c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.66 1.69-1.5 1.69Zm6.64 0c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.65 1.69-1.5 1.69Z"/></svg>
-          Únete al Discord
-        </a>
-      </div>
-
-      <div class="reveal flex flex-wrap items-stretch justify-center gap-4 mt-10">
-        <div class="liquid-glass p-5 w-[210px] rounded-[1.25rem]">
-          <svg viewBox="0 0 24 24" class="h-7 w-7 text-gold-300" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1-1.8 3-1.8s3 .8 3 1.8-1 1.4-3 1.8c-2 .4-3 1-3 2s1.3 1.8 3 1.8 3-.6 3-1.6"/></svg>
-          <div class="font-heading italic text-white text-4xl tracking-tight leading-none mt-3">+500</div>
-          <div class="text-xs text-white/70 font-body font-light mt-2">Pedidos entregados</div>
-        </div>
-        <div class="liquid-glass p-5 w-[210px] rounded-[1.25rem]">
-          <svg viewBox="0 0 24 24" class="h-7 w-7 text-gold-300" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
-          <div class="font-heading italic text-white text-4xl tracking-tight leading-none mt-3">100%</div>
-          <div class="text-xs text-white/70 font-body font-light mt-2">Entrega verificada por Discord</div>
-        </div>
+<!-- ================= ABOUT ================= -->
+<section class="chamber" id="nexnord">
+  <div class="chamber-head reveal-up">
+    <div class="eyebrow">El reino</div>
+    <h2>Bienvenido a NexNord</h2>
+    <p>Un servidor construido sobre hielo antiguo y auroras que nunca se apagan. Aquí, cada rango que reclamas no es solo un beneficio: es un título que se gana escalando la jerarquía del norte.</p>
+  </div>
+  <div class="about-grid">
+    <div class="about-card reveal-up">
+      <p>NexNord combina survival competitivo con una economía cuidada y una comunidad activa en Discord. Los rangos desbloquean ventajas reales dentro del juego: desde kits de inicio hasta acceso a zonas y comandos exclusivos.</p>
+      <p>Todo lo que compras aquí se activa manualmente para evitar fraudes: pagas, envías tu comprobante por ticket, y nuestro equipo te lo entrega en minutos.</p>
+      <div class="stat-row">
+        <div class="stat"><b>5</b><span>Rangos disponibles</span></div>
+        <div class="stat"><b>500</b><span>Coins por recarga</span></div>
+        <div class="stat"><b>24/7</b><span>Soporte en Discord</span></div>
       </div>
     </div>
-
-    <div class="reveal relative z-10 flex flex-col items-center gap-3 pb-8 px-4">
-      <div class="liquid-glass rounded-full px-3.5 py-1 text-xs font-medium text-white/80 font-body">
-        Cotiza directo con harlex_fx o harlex_dev
-      </div>
-      <div class="flex items-center gap-4 text-white/60 text-xs font-body">
-        <a href="https://www.instagram.com/harlex_dev?igsh=MWJjMDdhajBqNHFzbQ==" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-gold-300 transition-colors">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-          Instagram
-        </a>
-        <span class="opacity-30">·</span>
-        <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 hover:text-gold-300 transition-colors">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.21.375-.444.875-.608 1.262a18.27 18.27 0 0 0-5.554 0A12.5 12.5 0 0 0 9.115 3 19.74 19.74 0 0 0 4.68 4.37C2.05 8.21 1.32 11.96 1.6 15.66a19.9 19.9 0 0 0 5.99 3.03c.49-.67.92-1.39 1.29-2.14a12.9 12.9 0 0 1-2.03-.97c.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.3 0c.16.14.33.27.5.4-.65.38-1.33.7-2.04.97.37.75.8 1.47 1.29 2.14a19.9 19.9 0 0 0 5.99-3.03c.34-4.3-.7-8.01-2.79-11.29ZM8.68 13.33c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.66 1.69-1.5 1.69Zm6.64 0c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.65 1.69-1.5 1.69Z"/></svg>
-          Discord
-        </a>
-      </div>
+    <div class="about-visual reveal-up" id="aboutVisual">
+      <svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="400" fill="#0A1526"/>
+        <g id="aboutMountains">
+          <polygon points="0,400 0,260 90,150 180,270 260,180 400,290 400,400" fill="#132a44"/>
+          <polygon points="0,400 0,320 130,220 230,320 320,240 400,330 400,400" fill="#1b3a5c"/>
+        </g>
+        <g id="aboutCrystal" transform="translate(200,210)">
+          <polygon points="0,-70 34,0 0,70 -34,0" fill="none" stroke="#7FE3FF" stroke-width="2"/>
+          <polygon points="0,-40 20,0 0,40 -20,0" fill="#7FE3FF" opacity="0.35"/>
+        </g>
+      </svg>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ============ ARK SECTION ============ -->
-  <section id="ark" class="relative overflow-hidden">
-    <div class="relative px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto pt-28 pb-4">
-      <div class="reveal mb-10 max-w-2xl">
-        <div class="text-sm font-body text-gold-300/80 mb-3 tracking-wide">// ARK Survival</div>
-        <h2 class="font-heading italic text-white text-5xl md:text-6xl leading-[0.95] tracking-tight">
-          <span class="block">Recursos de</span>
-          <span class="block">supervivencia</span>
-        </h2>
-        <p class="text-sm text-white/60 font-body font-light mt-4 max-w-lg leading-relaxed">Todo lo que necesitas para avanzar más rápido en ARK: tokens, ámbar, arkeotipos y niveles para tus dinos.</p>
+<!-- ================= RANGOS ================= -->
+<section class="chamber" id="rangos">
+  <div class="chamber-head reveal-up">
+    <div class="eyebrow">Tienda · Rangos</div>
+    <h2>Rangos disponibles</h2>
+    <p>Cinco escalones hacia el trono. Cada rango incluye todo lo del anterior, más nuevas ventajas exclusivas.</p>
+  </div>
+
+  <div class="rank-track">
+
+    <div class="rank-card reveal-scale" style="--tier-color:#B7C4D6; --tier-glow:rgba(183,196,214,.5);">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="30" y="15" width="40" height="35" fill="#B7C4D6"/><rect x="20" y="50" width="60" height="14" fill="#8FA0B5"/><rect x="40" y="64" width="20" height="20" fill="#8FA0B5"/><rect x="42" y="25" width="6" height="6" fill="#0A1526"/><rect x="52" y="25" width="6" height="6" fill="#0A1526"/></svg>
+      <div class="rank-info">
+        <div class="rank-name">Knight <span class="rank-tier-tag">Tier I</span></div>
+        <p>El comienzo perfecto para quienes desean iniciar con ventajas exclusivas dentro del reino.</p>
+      </div>
+      <div class="rank-price">
+        <span class="amount">$5 USD</span>
+        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/P955NZ63LDY3J" target="_blank" rel="noopener">Comprar Knight</a>
       </div>
     </div>
 
-    <!-- TOKENS -->
-    <div class="relative">
-      <div class="bg-hero" style="opacity:0.55"><div class="fog-layer"></div></div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-12">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1-1.8 3-1.8s3 .8 3 1.8-1 1.4-3 1.8c-2 .4-3 1-3 2s1.3 1.8 3 1.8 3-.6 3-1.6"/></svg>
-          Tokens
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="grid-tokens"></div>
+    <div class="rank-card reveal-scale" style="--tier-color:#7FE3FF; --tier-glow:rgba(127,227,255,.5); margin-left:2%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="20" width="50" height="30" fill="#7FE3FF"/><rect x="15" y="50" width="70" height="12" fill="#4FB6D6"/><rect x="35" y="62" width="30" height="22" fill="#4FB6D6"/><polygon points="50,10 60,20 40,20" fill="#7FE3FF"/></svg>
+      <div class="rank-info">
+        <div class="rank-name">Lord <span class="rank-tier-tag">Tier II</span></div>
+        <p>Más beneficios, más recompensas y una mejor experiencia desde el inicio de tu aventura.</p>
+      </div>
+      <div class="rank-price">
+        <span class="amount">$10 USD</span>
+        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/RMG5XF5GTFPX6" target="_blank" rel="noopener">Comprar Lord</a>
       </div>
     </div>
 
-    <!-- AMBAR -->
-    <div class="relative">
-      <div class="bg-amber-sec">
-        <div class="blob-amber" style="width:280px;height:280px;top:-5%;left:10%"></div>
-        <div class="blob-amber" style="width:220px;height:220px;top:40%;left:75%;animation-delay:2s"></div>
-        <div class="blob-amber" style="width:180px;height:180px;top:70%;left:25%;animation-delay:4s"></div>
+    <div class="rank-card reveal-scale" style="--tier-color:#6FFFB0; --tier-glow:rgba(111,255,176,.5); margin-left:4%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="20" y="45" width="24" height="8" fill="#6FFFB0" transform="rotate(45 32 49)"/><rect x="56" y="45" width="24" height="8" fill="#6FFFB0" transform="rotate(-45 68 49)"/><rect x="46" y="20" width="8" height="60" fill="#4FCF8C"/></svg>
+      <div class="rank-info">
+        <div class="rank-name">Paladin <span class="rank-tier-tag">Tier III</span></div>
+        <p>Un rango para auténticos guerreros del hielo, con ventajas aún mayores en combate y economía.</p>
       </div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-12">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 3h6l3 5-6 13L6 8l3-5Z"/><path d="M6 8h12M9 3l1.5 5L9 14M15 3l-1.5 5L15 14"/></svg>
-          Ámbar
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="grid-amber"></div>
+      <div class="rank-price">
+        <span class="amount">$14 USD</span>
+        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/37D92CRVPNWZ8" target="_blank" rel="noopener">Comprar Paladin</a>
       </div>
     </div>
 
-    <!-- ARKEOTIPOS -->
-    <div class="relative">
-      <div class="bg-arkeo"></div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-12">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/><path d="M9 11l3-3 3 3-3 3-3-3Z"/></svg>
-          Arkeotipos
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="grid-arkeo"></div>
+    <div class="rank-card reveal-scale" style="--tier-color:#B18CFF; --tier-glow:rgba(177,140,255,.5); margin-left:6%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="45" width="50" height="30" fill="#B18CFF"/><polygon points="25,45 32,20 42,40 50,15 58,40 68,20 75,45" fill="#B18CFF"/><rect x="45" y="30" width="10" height="10" fill="#F4C95D"/></svg>
+      <div class="rank-info">
+        <div class="rank-name">Duke <span class="rank-tier-tag">Tier IV</span></div>
+        <p>Prestigio, beneficios premium y acceso a recompensas exclusivas reservadas para la nobleza.</p>
+      </div>
+      <div class="rank-price">
+        <span class="amount">$20 USD</span>
+        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/H6SKZTWZE44E6" target="_blank" rel="noopener">Comprar Duke</a>
       </div>
     </div>
 
-    <!-- NIVELES -->
-    <div class="relative">
-      <div class="bg-levels" id="levelsBg"></div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-12">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18h3v-5H3v5Zm6.5 0h3V9h-3v9ZM16 18h3V4h-3v14Z"/></svg>
-          Subida de niveles para dinos
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" id="grid-niveles"></div>
+    <div class="rank-card reveal-scale" style="--tier-color:#F4C95D; --tier-glow:rgba(244,201,93,.55); margin-left:8%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="22" y="48" width="56" height="28" fill="#F4C95D"/><polygon points="22,48 30,22 42,42 50,18 58,42 70,22 78,48" fill="#F4C95D"/><rect x="46" y="30" width="8" height="8" fill="#8B1E1E"/><rect x="28" y="34" width="6" height="6" fill="#2E7FD1"/><rect x="66" y="34" width="6" height="6" fill="#2E7FD1"/></svg>
+      <div class="rank-info">
+        <div class="rank-name">King <span class="rank-tier-tag">Tier V · Máximo</span></div>
+        <p>Nuestro rango más alto, diseñado para quienes quieren dominar NexNord desde el primer día.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- ============ ENTRETENIMIENTO ============ -->
-  <section id="entretenimiento" class="relative min-h-[80vh] py-28 overflow-hidden">
-    <div class="bg-anime"><div class="wave-anime"></div></div>
-    <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto">
-      <div class="reveal mb-10 max-w-2xl">
-        <div class="text-sm font-body text-gold-300/80 mb-3 tracking-wide">// Entretenimiento</div>
-        <h2 class="font-heading italic text-white text-5xl md:text-6xl leading-[0.95] tracking-tight">
-          <span class="block">Streaming &amp;</span>
-          <span class="block">anime</span>
-        </h2>
-        <p class="text-sm text-white/60 font-body font-light mt-4 max-w-lg leading-relaxed">Suscripciones de entretenimiento al mejor precio, con entrega directa por Discord.</p>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="grid-entretenimiento"></div>
-    </div>
-  </section>
-
-  <!-- ============ VIDEOJUEGOS ============ -->
-  <section id="videojuegos" class="relative overflow-hidden">
-    <div class="px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto relative z-10 pt-28 pb-4">
-      <div class="reveal mb-10 max-w-2xl">
-        <div class="text-sm font-body text-gold-300/80 mb-3 tracking-wide">// Video Juegos</div>
-        <h2 class="font-heading italic text-white text-5xl md:text-6xl leading-[0.95] tracking-tight">
-          <span class="block">Recargas</span>
-          <span class="block">al instante</span>
-        </h2>
-        <p class="text-sm text-white/60 font-body font-light mt-4 max-w-lg leading-relaxed">Diamantes y oro para tus juegos favoritos, acreditados directo a tu cuenta.</p>
+      <div class="rank-price">
+        <span class="amount">$25 USD</span>
+        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/E4RZTNY2MN28C" target="_blank" rel="noopener">Comprar King</a>
       </div>
     </div>
 
-    <div class="relative">
-      <div class="bg-ff"><div class="scan-ff"></div></div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-14">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 14h9l2-3h6l2 3v3h-3v-2h-2v2h-3v-2H9l-2 3H3v-3l-1-1Z"/><path d="M13 11V7h4v2"/></svg>
-          Free Fire — Diamantes
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="grid-ff"></div>
+  </div>
+
+  <div class="claim-box reveal-up">
+    <div class="claim-step">
+      <div class="n">01</div>
+      <p><strong>Realiza el pago</strong> del rango elegido a través del botón correspondiente en PayPal.</p>
+    </div>
+    <div class="claim-step">
+      <div class="n">02</div>
+      <p><strong>Toma una captura</strong> de pantalla clara del comprobante de pago una vez confirmado.</p>
+    </div>
+    <div class="claim-step">
+      <div class="n">03</div>
+      <p><strong>Abre un ticket</strong> en nuestro Discord y envía la captura para que el equipo active tu rango.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COINS ================= -->
+<section class="chamber" id="coins">
+  <div class="chamber-head reveal-up">
+    <div class="eyebrow">Tienda · Economía</div>
+    <h2>Recarga de Coins</h2>
+    <p>La moneda del reino para comerciar, mejorar y crecer dentro de NexNord.</p>
+  </div>
+  <div class="coin-card reveal-scale">
+    <div class="coin-left">
+      <svg class="coin-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#F4C95D" stroke-width="6"/><circle cx="50" cy="50" r="24" fill="#F4C95D" opacity="0.25"/><rect x="44" y="30" width="12" height="40" fill="#F4C95D"/></svg>
+      <div>
+        <h3>500 Coins</h3>
+        <p>Ideal para comprar en tiendas de jugadores, subastas del servidor o mejoras dentro del juego. Recarga instantánea tras confirmar tu pago.</p>
       </div>
     </div>
-
-    <div class="relative">
-      <div class="bg-bs"><div class="pulse-bs"></div></div>
-      <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-14">
-        <h3 class="font-heading italic text-gold-200 text-2xl mb-4 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>
-          Blood Strike — Oro
-        </h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="grid-bs"></div>
-      </div>
+    <div style="text-align:right;">
+      <div class="coin-price">$5 USD</div>
+      <a class="btn btn-gold" style="margin-top:14px;" href="https://www.paypal.com/ncp/payment/88ABVUVG4RPM4" target="_blank" rel="noopener">Comprar Coins</a>
     </div>
-  </section>
-
-  <!-- ============ CONTACTO ============ -->
-  <section id="contacto" class="relative py-28 overflow-hidden">
-    <div class="bg-contact" id="contactBg"></div>
-    <div class="relative z-10 px-4 sm:px-8 lg:px-16 max-w-4xl mx-auto text-center">
-      <div class="text-sm font-body text-gold-300/80 mb-3 tracking-wide">// Otras recargas</div>
-      <h2 class="font-heading italic text-white text-4xl md:text-6xl leading-tight tracking-tight mb-5">
-        ¿Buscas algo que no está en la lista?
-      </h2>
-      <p class="text-sm md:text-base text-white/70 font-body font-light max-w-xl mx-auto leading-relaxed mb-10">
-        Cotiza cualquier otra recarga, juego o servicio directamente con <span class="text-gold-300 font-medium">harlex_fx</span> o <span class="text-gold-300 font-medium">harlex_dev</span>.
-        Respondemos rápido y la entrega se coordina por Discord o Instagram.
-      </p>
-
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer"
-           class="liquid-glass-strong rounded-full px-7 py-3.5 text-sm font-semibold text-white flex items-center gap-2 hover:text-gold-200 transition-colors focus-gold">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.21.375-.444.875-.608 1.262a18.27 18.27 0 0 0-5.554 0A12.5 12.5 0 0 0 9.115 3 19.74 19.74 0 0 0 4.68 4.37C2.05 8.21 1.32 11.96 1.6 15.66a19.9 19.9 0 0 0 5.99 3.03c.49-.67.92-1.39 1.29-2.14a12.9 12.9 0 0 1-2.03-.97c.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.3 0c.16.14.33.27.5.4-.65.38-1.33.7-2.04.97.37.75.8 1.47 1.29 2.14a19.9 19.9 0 0 0 5.99-3.03c.34-4.3-.7-8.01-2.79-11.29ZM8.68 13.33c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.66 1.69-1.5 1.69Zm6.64 0c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.65 1.69-1.5 1.69Z"/></svg>
-          Cotizar por Discord
-        </a>
-        <a href="https://www.instagram.com/harlex_dev?igsh=MWJjMDdhajBqNHFzbQ==" target="_blank" rel="noopener noreferrer"
-           class="liquid-glass rounded-full px-7 py-3.5 text-sm font-semibold text-white/90 flex items-center gap-2 hover:text-gold-200 transition-colors focus-gold">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-          Escríbenos a Instagram
-        </a>
-      </div>
-
-      <div class="liquid-glass rounded-2xl p-6 mt-14 text-left max-w-2xl mx-auto">
-        <h4 class="font-heading italic text-gold-200 text-xl mb-3 flex items-center gap-2">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a8.5 8.5 0 1 1-3.1-6.6"/><path d="M21 4v6h-6"/></svg>
-          ¿Cómo funciona una compra?
-        </h4>
-        <ol class="text-sm text-white/70 font-body font-light space-y-2 list-decimal list-inside">
-          <li>Elige el producto y presiona "Comprar" — te llevará a nuestro Discord.</li>
-          <li>Indica el producto exacto, cantidad y tu usuario/plataforma del juego.</li>
-          <li>Te confirmamos el método de pago y procesamos la entrega.</li>
-          <li>Recibes tu pedido verificado, normalmente en minutos.</li>
-        </ol>
-      </div>
+  </div>
+  <div class="claim-box reveal-up">
+    <div class="claim-step">
+      <div class="n">01</div>
+      <p><strong>Paga</strong> el paquete de 500 coins mediante el botón de PayPal.</p>
     </div>
-  </section>
-
-  <!-- ============ FOOTER ============ -->
-  <footer class="relative border-t border-white/10 py-10 px-4 sm:px-8 lg:px-16">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div class="flex items-center gap-3">
-        <div class="liquid-glass h-10 w-10 rounded-full flex items-center justify-center">
-          <span class="font-heading italic text-gold-200 text-xl">L</span>
-        </div>
-        <div>
-          <div class="font-heading italic text-white text-lg leading-none">Legend Gold</div>
-          <div class="text-xs text-white/50 font-body">Tienda gamer · ARK &amp; más</div>
-        </div>
-      </div>
-      <div class="flex items-center gap-5">
-        <a href="https://www.instagram.com/harlex_dev?igsh=MWJjMDdhajBqNHFzbQ==" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-gold-300 transition-colors flex items-center gap-2 text-sm font-body">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
-          @harlex_dev
-        </a>
-        <a href="https://discord.gg/kpRYsVgg" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-gold-300 transition-colors flex items-center gap-2 text-sm font-body">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="currentColor"><path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3c-.21.375-.444.875-.608 1.262a18.27 18.27 0 0 0-5.554 0A12.5 12.5 0 0 0 9.115 3 19.74 19.74 0 0 0 4.68 4.37C2.05 8.21 1.32 11.96 1.6 15.66a19.9 19.9 0 0 0 5.99 3.03c.49-.67.92-1.39 1.29-2.14a12.9 12.9 0 0 1-2.03-.97c.17-.13.34-.26.5-.4a14.2 14.2 0 0 0 12.3 0c.16.14.33.27.5.4-.65.38-1.33.7-2.04.97.37.75.8 1.47 1.29 2.14a19.9 19.9 0 0 0 5.99-3.03c.34-4.3-.7-8.01-2.79-11.29ZM8.68 13.33c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.66 1.69-1.5 1.69Zm6.64 0c-.83 0-1.5-.76-1.5-1.69s.66-1.69 1.5-1.69 1.51.77 1.5 1.69c0 .93-.65 1.69-1.5 1.69Z"/></svg>
-          Discord
-        </a>
-      </div>
+    <div class="claim-step">
+      <div class="n">02</div>
+      <p><strong>Captura el comprobante</strong> de pago para tenerlo listo como respaldo.</p>
     </div>
-    <div class="max-w-7xl mx-auto text-center text-white/30 text-xs font-body mt-8">
-      Legend Gold no está afiliado a Studio Wildcard, Garena ni NetEase. Todos los productos son saldos/recargas para uso personal en los respectivos juegos.
+    <div class="claim-step">
+      <div class="n">03</div>
+      <p><strong>Envíalo por ticket</strong> en Discord y recibirás tus coins directamente en el juego.</p>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    const DISCORD_URL = "https://discord.gg/kpRYsVgg";
+<!-- ================= FONDOS ================= -->
+<section class="chamber" id="fondos">
+  <div class="chamber-head reveal-up">
+    <div class="eyebrow">Extras</div>
+    <h2>Fondos de NexNord</h2>
+    <p>Wallpapers originales inspirados en el reino helado, listos para tu escritorio o tu celular. Descarga gratis.</p>
+  </div>
+  <div class="wall-grid">
 
-    function redirectToSeller() {
-      window.open(DISCORD_URL, "_blank");
+    <div class="wall-card reveal-scale">
+      <svg viewBox="0 0 400 300" id="wall1" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="300" fill="#0A1526"/>
+        <polygon points="0,300 0,180 70,90 150,190 220,110 300,200 400,140 400,300" fill="#12314f"/>
+        <polygon points="0,300 0,230 100,170 200,240 300,180 400,230 400,300" fill="#1c4a72"/>
+        <g opacity="0.5"><path d="M0,60 Q100,20 200,50 T400,40" stroke="#7FE3FF" stroke-width="10" fill="none"/></g>
+        <g opacity="0.4"><path d="M0,90 Q120,130 220,90 T400,100" stroke="#B18CFF" stroke-width="8" fill="none"/></g>
+      </svg>
+      <div class="wall-meta"><span>Aurora Boreal</span><button class="wall-dl" onclick="downloadSVG('wall1','nexnord-aurora.svg')">Descargar</button></div>
+    </div>
+
+    <div class="wall-card reveal-scale">
+      <svg viewBox="0 0 400 300" id="wall2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="300" fill="#081120"/>
+        <rect x="150" y="90" width="100" height="120" fill="#1b3a5c"/>
+        <rect x="130" y="60" width="30" height="60" fill="#1b3a5c"/>
+        <rect x="240" y="60" width="30" height="60" fill="#1b3a5c"/>
+        <polygon points="130,60 145,35 160,60" fill="#274d75"/>
+        <polygon points="240,60 255,35 270,60" fill="#274d75"/>
+        <rect x="185" y="140" width="30" height="70" fill="#0A1526"/>
+        <polygon points="0,300 0,240 400,240 400,300" fill="#0d2136"/>
+      </svg>
+      <div class="wall-meta"><span>Castillo Helado</span><button class="wall-dl" onclick="downloadSVG('wall2','nexnord-castillo.svg')">Descargar</button></div>
+    </div>
+
+    <div class="wall-card reveal-scale">
+      <svg viewBox="0 0 400 300" id="wall3" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="300" fill="#050d18"/>
+        <polygon points="200,40 250,150 200,260 150,150" fill="#7FE3FF" opacity="0.5"/>
+        <polygon points="200,80 230,150 200,220 170,150" fill="#EAF2FA" opacity="0.6"/>
+        <polygon points="90,110 115,180 90,250 65,180" fill="#B18CFF" opacity="0.4"/>
+        <polygon points="310,110 335,180 310,250 285,180" fill="#6FFFB0" opacity="0.4"/>
+      </svg>
+      <div class="wall-meta"><span>Cueva de Cristal</span><button class="wall-dl" onclick="downloadSVG('wall3','nexnord-cristal.svg')">Descargar</button></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= EQUIPO ================= -->
+<section class="chamber" id="equipo">
+  <div class="chamber-head reveal-up">
+    <div class="eyebrow">Consejo del reino</div>
+    <h2>Nuestro equipo</h2>
+    <p>Las personas detrás de NexNord, siempre disponibles para ayudarte con tu compra.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal-up">
+      <div class="team-avatar" style="background:rgba(244,201,93,.15); color:#F4C95D;">X</div>
+      <div class="team-role">Owner</div>
+      <div class="team-name">Xpen</div>
+    </div>
+    <div class="team-card reveal-up">
+      <div class="team-avatar" style="background:rgba(127,227,255,.15); color:#7FE3FF;">H</div>
+      <div class="team-role">Co-Owner</div>
+      <div class="team-name">Harlex_fx</div>
+    </div>
+    <div class="team-card reveal-up">
+      <div class="team-avatar" style="background:rgba(111,255,176,.15); color:#6FFFB0;">H</div>
+      <div class="team-role">Soporte</div>
+      <div class="team-name">Harlex_fx</div>
+    </div>
+    <div class="team-card reveal-up">
+      <div class="team-avatar" style="background:rgba(177,140,255,.15); color:#B18CFF;">J</div>
+      <div class="team-role">Soporte</div>
+      <div class="team-name">JaredEu</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Nex<span>Nord</span></div>
+  <p>NexNord no está afiliado a Mojang ni a Microsoft. Todos los pagos se procesan de forma manual: recuerda siempre enviar tu captura de pago por ticket en Discord para reclamar tu compra.</p>
+  <div class="foot-links">
+    <a href="#rangos">Rangos</a>
+    <a href="#coins">Coins</a>
+    <a href="#fondos">Fondos</a>
+    <a href="#">Discord</a>
+  </div>
+  <div class="fine">© 2026 NexNord — Reino del hielo eterno.</div>
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// respect reduced motion
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Hero entrance */
+gsap.timeline({defaults:{ease:'power3.out'}})
+  .to('#heroTitle', {opacity:1, y:0, duration:1}, 0.1)
+  .fromTo('#heroTitle', {y:40}, {y:0, duration:1}, 0.1)
+  .to('#heroSub', {opacity:1, y:0, duration:.9}, 0.35)
+  .fromTo('#heroSub', {y:30}, {y:0, duration:.9}, 0.35)
+  .to('#heroActions', {opacity:1, y:0, duration:.8}, 0.55)
+  .fromTo('#heroActions', {y:24}, {y:0, duration:.8}, 0.55);
+
+/* floating shards in hero */
+if(!prefersReduced){
+  for(let i=0;i<10;i++){
+    const s = document.createElement('div');
+    s.className='shard';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.width = s.style.height = (8+Math.random()*14)+'px';
+    document.querySelector('.hero').appendChild(s);
+    gsap.to(s, {
+      y: '+=' + (30+Math.random()*40),
+      x: '+=' + (Math.random()*30-15),
+      opacity: 0.15+Math.random()*0.4,
+      duration: 3+Math.random()*3,
+      repeat:-1,
+      yoyo:true,
+      ease:'sine.inOut'
+    });
+  }
+}
+
+/* Aurora parallax spine across whole page */
+gsap.to('#auroraPath1', {
+  attr:{ d:"M0,40 Q400,-60 800,60 T1600,20 L1600,0 L0,0 Z" },
+  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.2 }
+});
+gsap.to('#auroraPath2', {
+  attr:{ d:"M0,200 Q500,340 900,260 T1600,220 L1600,3600 L0,3600 Z" },
+  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.2 }
+});
+gsap.to('#aurora-canvas', {
+  y: -300,
+  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1 }
+});
+
+/* Generic scale-reveal on scroll — images/cards expand smoothly */
+document.querySelectorAll('.reveal-scale').forEach((el)=>{
+  gsap.fromTo(el, {scale:0.82, opacity:0, y:40}, {
+    scale:1, opacity:1, y:0,
+    ease:'power2.out',
+    scrollTrigger:{
+      trigger: el,
+      start:'top 90%',
+      end:'top 55%',
+      scrub:1
     }
+  });
+});
 
-    /* ---------- ICON SVGS (reused per product type) ---------- */
-    const ICONS = {
-      token: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1 1-1.8 3-1.8s3 .8 3 1.8-1 1.4-3 1.8c-2 .4-3 1-3 2s1.3 1.8 3 1.8 3-.6 3-1.6"/></svg>',
-      amber: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 3h6l3 5-6 13L6 8l3-5Z"/><path d="M6 8h12M9 3l1.5 5L9 14M15 3l-1.5 5L15 14"/></svg>',
-      artifact: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/><path d="M9 11l3-3 3 3-3 3-3-3Z"/></svg>',
-      level: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 18h3v-5H3v5Zm6.5 0h3V9h-3v9ZM16 18h3V4h-3v14Z"/></svg>',
-      play: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>',
-      gun: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 14h9l2-3h6l2 3v3h-3v-2h-2v2h-3v-2H9l-2 3H3v-3l-1-1Z"/><path d="M13 11V7h4v2"/></svg>',
-      shield: '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg>',
-      arrow: '<svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>'
-    };
+/* Fade-up for text blocks */
+document.querySelectorAll('.reveal-up').forEach((el)=>{
+  gsap.fromTo(el, {opacity:0, y:36}, {
+    opacity:1, y:0, duration:1, ease:'power2.out',
+    scrollTrigger:{ trigger: el, start:'top 88%' }
+  });
+});
 
-    function priceCardHTML({ icon, title, subtitle, price, tag, info }) {
-      const priceDisplay = (price === null || price === undefined) ? "--" : `$${price}`;
-      return `
-        <div class="reveal card-glass hover-lift rounded-2xl p-5 flex flex-col gap-3">
-          <div class="flex items-start justify-between">
-            <div class="liquid-glass h-11 w-11 rounded-xl flex items-center justify-center text-gold-300">${icon}</div>
-            ${tag ? `<span class="text-[11px] font-body font-semibold text-gold-300 bg-gold-400/10 rounded-full px-2.5 py-1 whitespace-nowrap">${tag}</span>` : ""}
-          </div>
-          <div>
-            <h4 class="font-heading italic text-white text-2xl leading-tight">${title}</h4>
-            ${subtitle ? `<p class="text-xs text-white/60 font-body mt-1">${subtitle}</p>` : ""}
-          </div>
-          ${info ? `<p class="text-xs text-white/50 font-body leading-snug">${info}</p>` : ""}
-          <div class="mt-auto flex items-center justify-between pt-3 border-t border-white/10">
-            <span class="font-heading italic text-gold-300 text-3xl">${priceDisplay}</span>
-            <button class="buy-btn rounded-full bg-gold-400 text-ink-900 text-xs font-semibold px-4 py-2 flex items-center gap-1.5 hover:bg-gold-300 transition-colors focus-gold">
-              Comprar ${ICONS.arrow}
-            </button>
-          </div>
-        </div>`;
+/* Wallpaper images expand further as user scrolls past them (parallax zoom) */
+document.querySelectorAll('.wall-card svg').forEach((svg)=>{
+  gsap.fromTo(svg, {scale:1}, {
+    scale:1.14,
+    ease:'none',
+    scrollTrigger:{
+      trigger: svg.closest('.wall-card'),
+      start:'top bottom',
+      end:'bottom top',
+      scrub:1
     }
+  });
+});
 
-    function renderGrid(containerId, items) {
-      const el = document.getElementById(containerId);
-      if (!el) return;
-      el.innerHTML = items.map(priceCardHTML).join("");
-      el.querySelectorAll(".buy-btn").forEach(btn => btn.addEventListener("click", redirectToSeller));
-    }
+/* Rank crest crystals pulse/expand as revealed */
+document.querySelectorAll('.rank-crest').forEach((crest)=>{
+  gsap.fromTo(crest, {scale:0.5, rotate:-8}, {
+    scale:1, rotate:0, duration:.8, ease:'back.out(1.7)',
+    scrollTrigger:{ trigger: crest, start:'top 90%' }
+  });
+});
 
-    /* ---------- DATA ---------- */
-    const tokens = [
-      { icon: ICONS.token, title: "1M Tokens", price: 4, info: "Tokens ARK basico." },
-      { icon: ICONS.token, title: "2M Tokens", price: 6, info: "Tokens ARK basico pvp." },
-      { icon: ICONS.token, title: "1B Tokens", price: 7, info: "Tokens ARK especial." },
-      { icon: ICONS.token, title: "2B Tokens", price: 9, info: "Tokens ARK especial pvp." }
-    ];
+/* About visual mountains parallax */
+gsap.to('#aboutMountains', {
+  y: -18,
+  scrollTrigger:{ trigger:'#aboutVisual', start:'top bottom', end:'bottom top', scrub:1 }
+});
+gsap.to('#aboutCrystal', {
+  y: 14, rotate: 8,
+  scrollTrigger:{ trigger:'#aboutVisual', start:'top bottom', end:'bottom top', scrub:1 }
+});
 
-    const amber = [
-      { icon: ICONS.amber, title: "100K Ámbar", price: 1, info: "Ideal para crafteos básicos y mejoras tempranas de tu base." },
-      { icon: ICONS.amber, title: "1B Ámbar", price: 2.99, info: "El paquete más pedido — suficiente para clusters medianos." },
-      { icon: ICONS.amber, title: "2B Ámbar", price: 4.99, info: "Para tribus grandes: construcción masiva y breeding sin límites." }
-    ];
-
-    const arkeotipos = [
-      { icon: ICONS.artifact, title: "Pack Arkeotipos Básico", price: 4, info: "Arkeotipos para desbloquear engramas especiales y tecnología tribal." },
-      { icon: ICONS.artifact, title: "Pack Arkeotipos Avanzado", price: 7, info: "Arkeotipos para desbloquear engramas especiales y tecnología tribal." },
-      { icon: ICONS.artifact, title: "Pack Arkeotipos Élite", price: 8, info: "Arkeotipos para desbloquear engramas especiales y tecnología tribal." }
-    ];
-
-    const niveles = [
-      { icon: ICONS.level, title: "Subida 20 Niveles", price: 2.99, tag: "Por dino", info: "Sube de nivel a tu dino favorito de forma rápida y segura, 20 niveles de golpe." },
-      { icon: ICONS.level, title: "Max Level", price: 12, tag: "Top", info: "Lleva a tu dino al nivel máximo permitido. La opción definitiva para criadores." }
-    ];
-
-    const entretenimiento = [
-      { icon: ICONS.play, title: "Crunchyroll Premium", subtitle: "1 mes", price: 17, tag: "Disponible", info: "Acceso completo a la app de anime: catálogo simulcast, sin anuncios y calidad hasta Full HD." },
-      { icon: ICONS.play, title: "Próximamente", subtitle: "Espacio disponible", price: null, tag: "Pronto", info: "Aquí se agregará un nuevo servicio de streaming o entretenimiento." },
-      { icon: ICONS.play, title: "Próximamente", subtitle: "Espacio disponible", price: null, tag: "Pronto", info: "Reservado para futuras plataformas de entretenimiento." },
-      { icon: ICONS.play, title: "Próximamente", subtitle: "Espacio disponible", price: null, tag: "Pronto", info: "Reservado para futuras plataformas de entretenimiento." }
-    ];
-
-    const ff = [
-      { icon: ICONS.gun, title: "500 Diamantes", price: 7, info: "Recarga oficial de diamantes para Free Fire. Acreditación a tu cuenta de juego." },
-      { icon: ICONS.gun, title: "1000 Diamantes", price: 13, info: "El combo equilibrado para pases y skins de temporada." },
-      { icon: ICONS.gun, title: "1500 Diamantes", price: 19, info: "Más diamantes, más opciones en la tienda del juego." },
-      { icon: ICONS.gun, title: "2000 Diamantes", price: 25, info: "Paquete grande para coleccionistas de skins y bundles." }
-    ];
-
-    const bs = [
-      { icon: ICONS.shield, title: "300 Oro", price: 4.80, info: "Recarga de oro para Blood Strike, listo para usar en la tienda del juego." },
-      { icon: ICONS.shield, title: "1000 Oro", price: 10.88, info: "Buen balance entre precio y cantidad de oro." },
-      { icon: ICONS.shield, title: "2000 Oro", price: 20, info: "El paquete más completo de oro para Blood Strike." }
-    ];
-
-    renderGrid("grid-tokens", tokens);
-    renderGrid("grid-amber", amber);
-    renderGrid("grid-arkeo", arkeotipos);
-    renderGrid("grid-niveles", niveles);
-    renderGrid("grid-entretenimiento", entretenimiento);
-    renderGrid("grid-ff", ff);
-    renderGrid("grid-bs", bs);
-
-    /* ---------- DECORATIVE: level bars ---------- */
-    const levelsBg = document.getElementById("levelsBg");
-    if (levelsBg) {
-      let barsHTML = "";
-      for (let i = 0; i < 14; i++) {
-        const left = (i / 14) * 100 + Math.random() * 3;
-        const delay = (Math.random() * 5).toFixed(2);
-        const duration = (5 + Math.random() * 3).toFixed(2);
-        barsHTML += `<div class="bar-rise" style="left:${left}%; animation-delay:${delay}s; animation-duration:${duration}s"></div>`;
-      }
-      levelsBg.innerHTML = barsHTML;
-    }
-
-    /* ---------- DECORATIVE: sparkles ---------- */
-    const contactBg = document.getElementById("contactBg");
-    if (contactBg) {
-      let sparkleHTML = "";
-      for (let i = 0; i < 18; i++) {
-        const top = (Math.random() * 100).toFixed(1);
-        const left = (Math.random() * 100).toFixed(1);
-        const size = (2 + Math.random() * 3).toFixed(1);
-        const delay = (Math.random() * 3).toFixed(2);
-        sparkleHTML += `<span class="sparkle" style="top:${top}%; left:${left}%; width:${size}px; height:${size}px; animation-delay:${delay}s"></span>`;
-      }
-      contactBg.innerHTML = sparkleHTML;
-    }
-
-    /* ---------- MOBILE MENU TOGGLE ---------- */
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener("click", () => mobileMenu.classList.toggle("hidden"));
-      mobileMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => mobileMenu.classList.add("hidden")));
-    }
-
-    /* ---------- SCROLL REVEAL (IntersectionObserver, no dependencies) ---------- */
-    const revealEls = document.querySelectorAll(".reveal");
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.1 });
-      revealEls.forEach(el => io.observe(el));
-    } else {
-      revealEls.forEach(el => el.classList.add("is-visible"));
-    }
-  </script>
+/* Download helper for wallpaper SVGs */
+function downloadSVG(id, filename){
+  const svg = document.getElementById(id);
+  const serializer = new XMLSerializer();
+  let source = serializer.serializeToString(svg);
+  if(!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)){
+    source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  const blob = new Blob([source], {type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+</script>
 </body>
 </html>
