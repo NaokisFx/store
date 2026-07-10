@@ -8,18 +8,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --void:#050B14;
-    --panel:#0E1B2C;
-    --panel-2:#16283F;
-    --ice:#7FE3FF;
-    --ice-dim:rgba(127,227,255,.15);
-    --aurora-green:#6FFFB0;
-    --aurora-violet:#B18CFF;
-    --snow:#EAF2FA;
-    --snow-dim:#9FB3C8;
-    --gold:#F4C95D;
+    --void:#0B0705;
+    --panel:#1B120F;
+    --panel-2:#241811;
+    --ice:#8FE9FF;
+    --ice-dim:rgba(255,209,102,.16);
+    --aurora-green:#8ED65C;
+    --aurora-violet:#B98CF0;
+    --snow:#FBFBF7;
+    --snow-dim:#CBB9C7;
+    --gold:#FFD166;
+    --gold-deep:#E3A93B;
+    --amethyst:#8A5FD6;
     --danger:#FF6B6B;
     --radius:6px;
+    --px:10px; /* pixel-corner unit for the blocky/voxel look */
+  }
+  .pixel-corners{
+    clip-path: polygon(
+      0 var(--px), var(--px) var(--px), var(--px) 0,
+      calc(100% - var(--px)) 0, calc(100% - var(--px)) var(--px), 100% var(--px),
+      100% calc(100% - var(--px)), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px)) 100%,
+      var(--px) 100%, var(--px) calc(100% - var(--px)), 0 calc(100% - var(--px))
+    );
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -38,8 +49,8 @@
   }
   .mono{font-family:'JetBrains Mono',monospace;}
 
-  /* ---------- background aurora spine ---------- */
-  #aurora-canvas{
+  /* ---------- background: amethyst cave world (fondo fijo detrás de todo) ---------- */
+  #cave-bg{
     position:fixed;
     inset:0;
     width:100%;
@@ -55,7 +66,13 @@
                       radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.35) 0, transparent 50%),
                       radial-gradient(1px 1px at 90% 55%, rgba(255,255,255,.5) 0, transparent 50%);
     background-size: 600px 600px;
-    opacity:.8;
+    opacity:.7;
+  }
+  .grain{
+    position:fixed;inset:0;z-index:2;pointer-events:none;
+    opacity:.035;mix-blend-mode:overlay;
+    background-image:radial-gradient(rgba(255,255,255,.9) 1px, transparent 1px);
+    background-size:3px 3px;
   }
 
   .content{position:relative;z-index:1;}
@@ -70,8 +87,8 @@
   }
   .logo{
     font-size:1.1rem;
-    color:var(--ice);
-    text-shadow:0 0 12px rgba(127,227,255,.5);
+    color:var(--snow);
+    text-shadow:0 0 12px rgba(255,209,102,.45);
   }
   .logo span{color:var(--gold);}
   .nav-links{display:flex;gap:28px;align-items:center;}
@@ -86,11 +103,12 @@
   }
   .nav-links a:hover{color:var(--ice);}
   .nav-cta{
-    background:var(--ice);
-    color:var(--void)!important;
+    background:linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color:#241b04!important;
     padding:9px 16px;
     border-radius:var(--radius);
     font-weight:700;
+    box-shadow:0 0 16px rgba(255,209,102,.35);
   }
   @media(max-width:800px){ .nav-links a:not(.nav-cta){display:none;} }
 
@@ -108,7 +126,7 @@
   }
   .hero-eyebrow{
     font-family:'JetBrains Mono',monospace;
-    color:var(--aurora-green);
+    color:var(--gold);
     font-size:.8rem;
     letter-spacing:3px;
     text-transform:uppercase;
@@ -119,10 +137,10 @@
     font-size:clamp(2.6rem, 9vw, 6.5rem);
     line-height:1;
     color:var(--snow);
-    text-shadow:0 0 30px rgba(127,227,255,.25);
+    text-shadow:0 0 34px rgba(255,209,102,.3);
   }
   .hero h1 .accent{
-    background:linear-gradient(90deg, var(--ice), var(--aurora-green) 50%, var(--gold));
+    background:linear-gradient(90deg, var(--gold), var(--snow) 50%, var(--ice));
     -webkit-background-clip:text;
     background-clip:text;
     color:transparent;
@@ -149,8 +167,8 @@
     transition:transform .2s, box-shadow .2s;
   }
   .btn:hover{transform:translateY(-2px);}
-  .btn-primary{background:var(--ice);color:var(--void);box-shadow:0 0 24px rgba(127,227,255,.35);}
-  .btn-ghost{border-color:var(--ice-dim);color:var(--snow);}
+  .btn-primary{background:linear-gradient(135deg, var(--gold), var(--gold-deep));color:#241b04;box-shadow:0 0 24px rgba(255,209,102,.4);}
+  .btn-ghost{border-color:rgba(143,233,255,.35);color:var(--snow);}
   .btn-gold{background:linear-gradient(135deg, var(--gold), #e0a92f); color:#241b04; box-shadow:0 0 24px rgba(244,201,93,.3);}
 
   .scroll-hint{
@@ -159,16 +177,19 @@
     display:flex;flex-direction:column;align-items:center;gap:8px;
     letter-spacing:2px;text-transform:uppercase;
   }
-  .scroll-hint .line{width:1px;height:34px;background:linear-gradient(var(--ice), transparent);}
+  .scroll-hint .line{width:1px;height:34px;background:linear-gradient(var(--gold), transparent);}
 
-  /* floating crystal shards in hero */
+  /* floating voxel blocks in hero (mini bloques de píxel, no cristales) */
   .shard{
     position:absolute;
     width:14px;height:14px;
-    background:var(--ice);
+    background:linear-gradient(135deg, var(--gold), var(--ice));
     opacity:.5;
-    clip-path:polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-    filter:drop-shadow(0 0 6px var(--ice));
+    border-radius:2px;
+    box-shadow:
+      inset -3px -3px 0 rgba(0,0,0,.25),
+      inset 2px 2px 0 rgba(255,255,255,.3);
+    filter:drop-shadow(0 0 6px rgba(255,209,102,.5));
   }
 
   /* ---------- jagged divider (ice chasm) ---------- */
@@ -190,7 +211,7 @@
   .chamber-head{margin-bottom:64px;max-width:640px;}
   .eyebrow{
     font-family:'JetBrains Mono',monospace;
-    color:var(--ice);
+    color:var(--gold);
     font-size:.75rem;
     letter-spacing:3px;
     text-transform:uppercase;
@@ -199,7 +220,7 @@
     gap:10px;
     margin-bottom:14px;
   }
-  .eyebrow::before{content:'';width:18px;height:1px;background:var(--ice);}
+  .eyebrow::before{content:'';width:18px;height:1px;background:var(--gold);}
   .chamber-head h2{font-size:clamp(1.8rem,4vw,2.8rem);color:var(--snow);margin-bottom:14px;}
   .chamber-head p{color:var(--snow-dim);line-height:1.7;font-size:1rem;}
 
@@ -218,7 +239,7 @@
   }
   .about-card p{color:var(--snow-dim);line-height:1.75;margin-bottom:16px;font-size:.98rem;}
   .stat-row{display:flex;gap:34px;margin-top:26px;flex-wrap:wrap;}
-  .stat b{display:block;font-family:'Silkscreen',monospace;font-size:1.6rem;color:var(--ice);}
+  .stat b{display:block;font-family:'Silkscreen',monospace;font-size:1.6rem;color:var(--gold);}
   .stat span{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--snow-dim);text-transform:uppercase;letter-spacing:1px;}
   .about-visual{
     aspect-ratio:1/1;
@@ -274,6 +295,7 @@
     background:var(--tier-color, var(--ice));color:var(--void);
     font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:700;
     text-decoration:none;white-space:nowrap;
+    border:none;cursor:pointer;
   }
   @media(max-width:760px){
     .rank-card{grid-template-columns:64px 1fr;grid-template-areas:"crest name" "info info" "price price";}
@@ -313,35 +335,6 @@
   .coin-left p{color:var(--snow-dim);font-size:.92rem;max-width:380px;line-height:1.55;}
   .coin-price{font-family:'Silkscreen',monospace;font-size:2rem;color:var(--gold);}
 
-  /* ---------- wallpapers gallery ---------- */
-  .wall-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:22px;
-  }
-  .wall-card{
-    border-radius:10px;
-    overflow:hidden;
-    position:relative;
-    border:1px solid var(--ice-dim);
-    background:var(--panel);
-  }
-  .wall-card svg{display:block;width:100%;height:auto;transform:scale(1);}
-  .wall-meta{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:14px 16px;
-    border-top:1px solid var(--ice-dim);
-  }
-  .wall-meta span{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--snow-dim);}
-  .wall-dl{
-    background:none;border:1px solid var(--ice);color:var(--ice);
-    font-family:'JetBrains Mono',monospace;font-size:.68rem;
-    padding:7px 12px;border-radius:5px;cursor:pointer;
-    text-decoration:none;
-  }
-  .wall-dl:hover{background:var(--ice);color:var(--void);}
-  @media(max-width:860px){ .wall-grid{grid-template-columns:1fr 1fr;} }
-  @media(max-width:560px){ .wall-grid{grid-template-columns:1fr;} }
 
   /* ---------- team ---------- */
   .team-grid{
@@ -382,37 +375,633 @@
   footer .fine{color:#5c7085;font-size:.72rem;font-family:'JetBrains Mono',monospace;}
 
   .reveal{opacity:0;}
+
+  /* ---------- claim modal ---------- */
+  .claim-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(3,7,13,.75);
+    backdrop-filter:blur(3px);
+    display:none;
+    align-items:center;justify-content:center;
+    padding:20px;
+  }
+  .claim-overlay.open{display:flex;}
+  .claim-modal{
+    width:100%;max-width:420px;
+    background:var(--panel);
+    border:1px solid var(--ice-dim);
+    border-radius:12px;
+    padding:32px;
+    position:relative;
+  }
+  .claim-modal h3{color:var(--snow);font-size:1.3rem;margin-bottom:6px;}
+  .claim-modal .claim-price{
+    font-family:'JetBrains Mono',monospace;color:var(--ice);font-size:.85rem;margin-bottom:22px;
+  }
+  .claim-modal label{
+    display:block;font-family:'JetBrains Mono',monospace;font-size:.72rem;
+    color:var(--snow-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+  }
+  .claim-modal input{
+    width:100%;padding:12px 14px;margin-bottom:18px;
+    background:var(--void);border:1px solid var(--ice-dim);border-radius:6px;
+    color:var(--snow);font-family:'Manrope',sans-serif;font-size:.95rem;
+  }
+  .claim-modal input:focus{outline:none;border-color:var(--ice);}
+  .claim-modal .claim-note{
+    font-size:.78rem;color:var(--snow-dim);line-height:1.5;margin-bottom:22px;
+    background:rgba(127,227,255,.06);border:1px dashed var(--ice-dim);border-radius:8px;padding:12px 14px;
+  }
+  .claim-modal .claim-error{color:var(--danger);font-size:.8rem;margin:-10px 0 14px;display:none;}
+  .claim-close{
+    position:absolute;top:16px;right:18px;background:none;border:none;
+    color:var(--snow-dim);font-size:1.3rem;cursor:pointer;line-height:1;
+  }
+  .claim-close:hover{color:var(--snow);}
+  .claim-submit{width:100%;justify-content:center;}
+  .claim-submit:disabled{opacity:.6;cursor:default;transform:none;}
 </style>
 </head>
 <body>
 
 <div class="stars"></div>
-<svg id="aurora-canvas" viewBox="0 0 1600 3600" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+<svg id="cave-bg" viewBox="0 0 900 1560" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="auroraGrad1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#7FE3FF" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#7FE3FF" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#6FFFB0" stop-opacity="0"/>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bfe8ff"/>
+      <stop offset="55%" stop-color="#eaf7ff"/>
+      <stop offset="100%" stop-color="#d8ecf5"/>
     </linearGradient>
-    <linearGradient id="auroraGrad2" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#B18CFF" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#B18CFF" stop-opacity="0.28"/>
-      <stop offset="100%" stop-color="#F4C95D" stop-opacity="0"/>
+    <linearGradient id="rockVoid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B0705"/>
+      <stop offset="100%" stop-color="#0B0705"/>
     </linearGradient>
   </defs>
-  <path id="auroraPath1" fill="url(#auroraGrad1)" d="M0,0 Q400,120 800,40 T1600,80 L1600,0 L0,0 Z"/>
-  <path id="auroraPath2" fill="url(#auroraGrad2)" d="M0,300 Q500,420 900,340 T1600,380 L1600,3600 L0,3600 Z" opacity="0.5"/>
+
+  <!-- fondo base (cueva) -->
+  <rect x="0" y="0" width="900" height="1560" fill="#0B0705"/>
+
+  <!-- cielo / apertura de la cueva -->
+  <rect x="150" y="90" width="600" height="900" fill="url(#skyGrad)"/>
+  <!-- pico helado asomando al fondo -->
+  <g opacity="0.95">
+    <polygon points="380,260 450,120 520,260 480,260 460,190 440,260" fill="#eef7fb"/>
+    <polygon points="400,260 450,160 500,260" fill="#bcdcea"/>
+    <polygon points="450,160 470,220 430,220" fill="#7fb8d9" opacity="0.5"/>
+  </g>
+  <g fill="#ffffff" opacity="0.9">
+    <circle cx="300" cy="180" r="3"/>
+    <circle cx="560" cy="220" r="2.5"/>
+    <circle cx="480" cy="140" r="2"/>
+    <circle cx="360" cy="300" r="2"/>
+    <circle cx="600" cy="320" r="2.5"/>
+  </g>
+
+  <!-- muro de roca voxel enmarcando la apertura -->
+  <g id="rockFrame">
+<rect x="0" y="0" width="60" height="60" fill="#1c120c"/>
+<rect x="0" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="0" width="60" height="60" fill="#2b1c13"/>
+<rect x="60" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="0" width="60" height="60" fill="#332215"/>
+<rect x="120" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="0" width="60" height="60" fill="#241811"/>
+<rect x="180" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="0" width="60" height="60" fill="#241811"/>
+<rect x="240" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="0" width="60" height="60" fill="#20150e"/>
+<rect x="300" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="0" width="60" height="60" fill="#241811"/>
+<rect x="360" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="0" width="60" height="60" fill="#1c120c"/>
+<rect x="480" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="0" width="60" height="60" fill="#20150e"/>
+<rect x="540" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="0" width="60" height="60" fill="#241811"/>
+<rect x="600" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="0" width="60" height="60" fill="#20150e"/>
+<rect x="660" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="0" width="60" height="60" fill="#2b1c13"/>
+<rect x="720" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="0" width="60" height="60" fill="#241811"/>
+<rect x="780" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="0" width="60" height="60" fill="#241811"/>
+<rect x="840" y="0" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="60" width="60" height="60" fill="#332215"/>
+<rect x="0" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="60" width="60" height="60" fill="#332215"/>
+<rect x="60" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="60" width="60" height="60" fill="#241811"/>
+<rect x="120" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="60" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="60" width="60" height="60" fill="#241811"/>
+<rect x="240" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="60" width="60" height="60" fill="#20150e"/>
+<rect x="300" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="60" width="60" height="60" fill="#332215"/>
+<rect x="360" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="60" width="60" height="60" fill="#241811"/>
+<rect x="480" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="60" width="60" height="60" fill="#20150e"/>
+<rect x="540" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="60" width="60" height="60" fill="#241811"/>
+<rect x="600" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="60" width="60" height="60" fill="#2b1c13"/>
+<rect x="660" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="60" width="60" height="60" fill="#20150e"/>
+<rect x="720" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="60" width="60" height="60" fill="#241811"/>
+<rect x="780" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="60" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="60" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="120" width="60" height="60" fill="#20150e"/>
+<rect x="0" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="120" width="60" height="60" fill="#332215"/>
+<rect x="60" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="120" width="60" height="60" fill="#241811"/>
+<rect x="120" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="120" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="120" width="60" height="60" fill="#241811"/>
+<rect x="240" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="120" width="60" height="60" fill="#20150e"/>
+<rect x="300" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="120" width="60" height="60" fill="#2b1c13"/>
+<rect x="540" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="120" width="60" height="60" fill="#1c120c"/>
+<rect x="600" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="120" width="60" height="60" fill="#332215"/>
+<rect x="660" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="120" width="60" height="60" fill="#2b1c13"/>
+<rect x="720" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="120" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="120" width="60" height="60" fill="#241811"/>
+<rect x="840" y="120" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="180" width="60" height="60" fill="#20150e"/>
+<rect x="0" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="180" width="60" height="60" fill="#1c120c"/>
+<rect x="60" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="180" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="180" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="180" width="60" height="60" fill="#241811"/>
+<rect x="240" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="180" width="60" height="60" fill="#20150e"/>
+<rect x="300" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="180" width="60" height="60" fill="#20150e"/>
+<rect x="540" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="180" width="60" height="60" fill="#2b1c13"/>
+<rect x="600" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="180" width="60" height="60" fill="#1c120c"/>
+<rect x="660" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="180" width="60" height="60" fill="#241811"/>
+<rect x="720" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="180" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="180" width="60" height="60" fill="#241811"/>
+<rect x="840" y="180" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="240" width="60" height="60" fill="#20150e"/>
+<rect x="0" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="240" width="60" height="60" fill="#241811"/>
+<rect x="60" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="240" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="240" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="240" width="60" height="60" fill="#332215"/>
+<rect x="240" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="240" width="60" height="60" fill="#20150e"/>
+<rect x="600" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="240" width="60" height="60" fill="#332215"/>
+<rect x="660" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="240" width="60" height="60" fill="#1c120c"/>
+<rect x="720" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="240" width="60" height="60" fill="#332215"/>
+<rect x="780" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="240" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="240" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="300" width="60" height="60" fill="#332215"/>
+<rect x="0" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="300" width="60" height="60" fill="#1c120c"/>
+<rect x="60" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="300" width="60" height="60" fill="#1c120c"/>
+<rect x="120" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="300" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="300" width="60" height="60" fill="#2b1c13"/>
+<rect x="660" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="300" width="60" height="60" fill="#2b1c13"/>
+<rect x="720" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="300" width="60" height="60" fill="#241811"/>
+<rect x="780" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="300" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="300" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="360" width="60" height="60" fill="#1c120c"/>
+<rect x="0" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="360" width="60" height="60" fill="#20150e"/>
+<rect x="60" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="360" width="60" height="60" fill="#332215"/>
+<rect x="120" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="360" width="60" height="60" fill="#1c120c"/>
+<rect x="180" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="360" width="60" height="60" fill="#332215"/>
+<rect x="660" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="360" width="60" height="60" fill="#1c120c"/>
+<rect x="720" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="360" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="360" width="60" height="60" fill="#241811"/>
+<rect x="840" y="360" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="420" width="60" height="60" fill="#241811"/>
+<rect x="0" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="420" width="60" height="60" fill="#20150e"/>
+<rect x="60" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="420" width="60" height="60" fill="#332215"/>
+<rect x="120" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="420" width="60" height="60" fill="#2b1c13"/>
+<rect x="720" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="420" width="60" height="60" fill="#1c120c"/>
+<rect x="780" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="420" width="60" height="60" fill="#2b1c13"/>
+<rect x="840" y="420" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="480" width="60" height="60" fill="#332215"/>
+<rect x="0" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="480" width="60" height="60" fill="#332215"/>
+<rect x="60" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="480" width="60" height="60" fill="#241811"/>
+<rect x="120" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="480" width="60" height="60" fill="#241811"/>
+<rect x="720" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="480" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="480" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="480" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="540" width="60" height="60" fill="#1c120c"/>
+<rect x="0" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="540" width="60" height="60" fill="#1c120c"/>
+<rect x="60" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="540" width="60" height="60" fill="#1c120c"/>
+<rect x="120" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="540" width="60" height="60" fill="#20150e"/>
+<rect x="720" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="540" width="60" height="60" fill="#332215"/>
+<rect x="780" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="540" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="540" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="600" width="60" height="60" fill="#332215"/>
+<rect x="0" y="600" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="600" width="60" height="60" fill="#241811"/>
+<rect x="60" y="600" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="600" width="60" height="60" fill="#241811"/>
+<rect x="780" y="600" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="600" width="60" height="60" fill="#1c120c"/>
+<rect x="840" y="600" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="660" width="60" height="60" fill="#332215"/>
+<rect x="0" y="660" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="660" width="60" height="60" fill="#241811"/>
+<rect x="60" y="660" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="660" width="60" height="60" fill="#241811"/>
+<rect x="780" y="660" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="660" width="60" height="60" fill="#1c120c"/>
+<rect x="840" y="660" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="720" width="60" height="60" fill="#20150e"/>
+<rect x="0" y="720" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="720" width="60" height="60" fill="#332215"/>
+<rect x="60" y="720" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="720" width="60" height="60" fill="#1c120c"/>
+<rect x="780" y="720" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="720" width="60" height="60" fill="#332215"/>
+<rect x="840" y="720" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="780" width="60" height="60" fill="#1c120c"/>
+<rect x="0" y="780" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="780" width="60" height="60" fill="#241811"/>
+<rect x="840" y="780" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="840" width="60" height="60" fill="#332215"/>
+<rect x="0" y="840" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="840" width="60" height="60" fill="#1c120c"/>
+<rect x="840" y="840" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="960" width="60" height="60" fill="#2b1c13"/>
+<rect x="0" y="960" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="960" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="960" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1020" width="60" height="60" fill="#241811"/>
+<rect x="0" y="1020" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1020" width="60" height="60" fill="#332215"/>
+<rect x="840" y="1020" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1080" width="60" height="60" fill="#241811"/>
+<rect x="0" y="1080" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1080" width="60" height="60" fill="#2b1c13"/>
+<rect x="60" y="1080" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1080" width="60" height="60" fill="#1c120c"/>
+<rect x="780" y="1080" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1080" width="60" height="60" fill="#2b1c13"/>
+<rect x="840" y="1080" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1140" width="60" height="60" fill="#2b1c13"/>
+<rect x="0" y="1140" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1140" width="60" height="60" fill="#332215"/>
+<rect x="60" y="1140" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1140" width="60" height="60" fill="#332215"/>
+<rect x="780" y="1140" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1140" width="60" height="60" fill="#332215"/>
+<rect x="840" y="1140" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1200" width="60" height="60" fill="#241811"/>
+<rect x="0" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1200" width="60" height="60" fill="#2b1c13"/>
+<rect x="60" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1200" width="60" height="60" fill="#332215"/>
+<rect x="120" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1200" width="60" height="60" fill="#332215"/>
+<rect x="720" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1200" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1200" width="60" height="60" fill="#1c120c"/>
+<rect x="840" y="1200" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="0" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1260" width="60" height="60" fill="#332215"/>
+<rect x="60" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1260" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="1260" width="60" height="60" fill="#1c120c"/>
+<rect x="180" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="1260" width="60" height="60" fill="#332215"/>
+<rect x="240" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="1260" width="60" height="60" fill="#1c120c"/>
+<rect x="300" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="1260" width="60" height="60" fill="#332215"/>
+<rect x="360" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="480" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="540" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="1260" width="60" height="60" fill="#241811"/>
+<rect x="600" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="660" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="720" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="780" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1260" width="60" height="60" fill="#2b1c13"/>
+<rect x="840" y="1260" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1320" width="60" height="60" fill="#241811"/>
+<rect x="0" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1320" width="60" height="60" fill="#332215"/>
+<rect x="60" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1320" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="1320" width="60" height="60" fill="#2b1c13"/>
+<rect x="180" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="1320" width="60" height="60" fill="#1c120c"/>
+<rect x="240" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="1320" width="60" height="60" fill="#1c120c"/>
+<rect x="300" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="1320" width="60" height="60" fill="#241811"/>
+<rect x="360" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="1320" width="60" height="60" fill="#2b1c13"/>
+<rect x="480" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="1320" width="60" height="60" fill="#332215"/>
+<rect x="540" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="1320" width="60" height="60" fill="#20150e"/>
+<rect x="600" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="1320" width="60" height="60" fill="#1c120c"/>
+<rect x="660" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1320" width="60" height="60" fill="#20150e"/>
+<rect x="720" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1320" width="60" height="60" fill="#20150e"/>
+<rect x="780" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1320" width="60" height="60" fill="#1c120c"/>
+<rect x="840" y="1320" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1380" width="60" height="60" fill="#2b1c13"/>
+<rect x="0" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1380" width="60" height="60" fill="#20150e"/>
+<rect x="60" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1380" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="1380" width="60" height="60" fill="#241811"/>
+<rect x="180" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="240" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="1380" width="60" height="60" fill="#20150e"/>
+<rect x="300" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="360" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="480" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="540" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="600" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="1380" width="60" height="60" fill="#241811"/>
+<rect x="660" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="720" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1380" width="60" height="60" fill="#332215"/>
+<rect x="780" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1380" width="60" height="60" fill="#241811"/>
+<rect x="840" y="1380" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1440" width="60" height="60" fill="#2b1c13"/>
+<rect x="0" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1440" width="60" height="60" fill="#241811"/>
+<rect x="60" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1440" width="60" height="60" fill="#2b1c13"/>
+<rect x="120" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="1440" width="60" height="60" fill="#332215"/>
+<rect x="180" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="1440" width="60" height="60" fill="#2b1c13"/>
+<rect x="240" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="1440" width="60" height="60" fill="#241811"/>
+<rect x="300" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="1440" width="60" height="60" fill="#1c120c"/>
+<rect x="360" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="1440" width="60" height="60" fill="#20150e"/>
+<rect x="480" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="1440" width="60" height="60" fill="#241811"/>
+<rect x="540" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="1440" width="60" height="60" fill="#241811"/>
+<rect x="600" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="1440" width="60" height="60" fill="#241811"/>
+<rect x="660" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1440" width="60" height="60" fill="#20150e"/>
+<rect x="720" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1440" width="60" height="60" fill="#2b1c13"/>
+<rect x="780" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1440" width="60" height="60" fill="#20150e"/>
+<rect x="840" y="1440" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="0" y="1500" width="60" height="60" fill="#241811"/>
+<rect x="0" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="60" y="1500" width="60" height="60" fill="#1c120c"/>
+<rect x="60" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="120" y="1500" width="60" height="60" fill="#20150e"/>
+<rect x="120" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="180" y="1500" width="60" height="60" fill="#241811"/>
+<rect x="180" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="240" y="1500" width="60" height="60" fill="#241811"/>
+<rect x="240" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="300" y="1500" width="60" height="60" fill="#2b1c13"/>
+<rect x="300" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="360" y="1500" width="60" height="60" fill="#20150e"/>
+<rect x="360" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="480" y="1500" width="60" height="60" fill="#332215"/>
+<rect x="480" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="540" y="1500" width="60" height="60" fill="#2b1c13"/>
+<rect x="540" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="600" y="1500" width="60" height="60" fill="#1c120c"/>
+<rect x="600" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="660" y="1500" width="60" height="60" fill="#1c120c"/>
+<rect x="660" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="720" y="1500" width="60" height="60" fill="#20150e"/>
+<rect x="720" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="780" y="1500" width="60" height="60" fill="#1c120c"/>
+<rect x="780" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+<rect x="840" y="1500" width="60" height="60" fill="#332215"/>
+<rect x="840" y="1500" width="60" height="6" fill="#000" opacity="0.25"/>
+  </g>
+
+  <!-- enredaderas colgando desde el techo -->
+  <g id="vines">
+<rect x="330" y="150" width="9" height="434" fill="#4c7a2f" opacity="0.85"/>
+<rect x="320" y="170" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="219" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="320" y="262" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="301" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="339" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="386" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="416" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="464" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="340" y="494" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="320" y="543" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="400" y="150" width="9" height="345" fill="#4c7a2f" opacity="0.85"/>
+<rect x="410" y="170" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="410" y="211" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="410" y="260" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="410" y="313" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="390" y="343" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="390" y="394" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="410" y="435" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<circle cx="404" cy="501" r="9" fill="#ff6fae" opacity="0.85"/>
+<rect x="470" y="150" width="9" height="411" fill="#4c7a2f" opacity="0.85"/>
+<rect x="480" y="170" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="480" y="205" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="480" y="240" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="480" y="294" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="480" y="343" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="480" y="382" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="460" y="415" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="460" y="463" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="460" y="502" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="540" y="150" width="9" height="321" fill="#4c7a2f" opacity="0.85"/>
+<rect x="550" y="170" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="550" y="205" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="530" y="255" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="550" y="288" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="530" y="328" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="530" y="372" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="550" y="404" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="610" y="150" width="9" height="405" fill="#4c7a2f" opacity="0.85"/>
+<rect x="620" y="170" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="208" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="263" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="294" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="334" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="620" y="372" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="427" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="620" y="482" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<rect x="600" y="530" width="12" height="10" fill="#6fae3f" opacity="0.8"/>
+<circle cx="614" cy="561" r="9" fill="#ff6fae" opacity="0.85"/>
+  </g>
+
+  <!-- cristales de amatista en primer plano -->
+  <g id="crystals">
+<rect x="0" y="1279" width="60" height="301" fill="#7a4fc0"/>
+<rect x="6" y="1293" width="14" height="281" fill="#a97ce8" opacity="0.55"/>
+<rect x="50" y="1285" width="10" height="281" fill="#432a72" opacity="0.6"/>
+<rect x="60" y="1158" width="60" height="422" fill="#7a4fc0"/>
+<rect x="65" y="1172" width="14" height="402" fill="#a97ce8" opacity="0.55"/>
+<rect x="110" y="1164" width="10" height="402" fill="#3a2266" opacity="0.6"/>
+<rect x="120" y="1160" width="60" height="420" fill="#6a3fae"/>
+<rect x="127" y="1174" width="14" height="400" fill="#a97ce8" opacity="0.55"/>
+<rect x="170" y="1166" width="10" height="400" fill="#3a2266" opacity="0.6"/>
+<rect x="180" y="1160" width="60" height="420" fill="#7a4fc0"/>
+<rect x="191" y="1174" width="14" height="400" fill="#a97ce8" opacity="0.55"/>
+<rect x="230" y="1166" width="10" height="400" fill="#432a72" opacity="0.6"/>
+<rect x="198" y="1090" width="18" height="80" fill="#5A3AA0"/>
+<rect x="201" y="1094" width="5" height="70" fill="#a97ce8" opacity="0.6"/>
+<rect x="240" y="1201" width="60" height="379" fill="#7a4fc0"/>
+<rect x="254" y="1215" width="14" height="359" fill="#B98CF0" opacity="0.55"/>
+<rect x="290" y="1207" width="10" height="359" fill="#3a2266" opacity="0.6"/>
+<rect x="245" y="1152" width="25" height="59" fill="#5A3AA0"/>
+<rect x="248" y="1156" width="5" height="49" fill="#c9a6f5" opacity="0.6"/>
+<rect x="300" y="1158" width="60" height="422" fill="#7a4fc0"/>
+<rect x="318" y="1172" width="14" height="402" fill="#a97ce8" opacity="0.55"/>
+<rect x="350" y="1164" width="10" height="402" fill="#432a72" opacity="0.6"/>
+<rect x="360" y="1182" width="60" height="398" fill="#6a3fae"/>
+<rect x="376" y="1196" width="14" height="378" fill="#a97ce8" opacity="0.55"/>
+<rect x="410" y="1188" width="10" height="378" fill="#432a72" opacity="0.6"/>
+<rect x="420" y="1332" width="60" height="248" fill="#6a3fae"/>
+<rect x="424" y="1346" width="14" height="228" fill="#B98CF0" opacity="0.55"/>
+<rect x="470" y="1338" width="10" height="228" fill="#3a2266" opacity="0.6"/>
+<rect x="451" y="1262" width="20" height="80" fill="#6a3fae"/>
+<rect x="454" y="1266" width="5" height="70" fill="#c9a6f5" opacity="0.6"/>
+<rect x="480" y="1141" width="60" height="439" fill="#6a3fae"/>
+<rect x="489" y="1155" width="14" height="419" fill="#a97ce8" opacity="0.55"/>
+<rect x="530" y="1147" width="10" height="419" fill="#432a72" opacity="0.6"/>
+<rect x="485" y="1094" width="21" height="57" fill="#7a4fc0"/>
+<rect x="488" y="1098" width="5" height="47" fill="#a97ce8" opacity="0.6"/>
+<rect x="540" y="1317" width="60" height="263" fill="#7a4fc0"/>
+<rect x="552" y="1331" width="14" height="243" fill="#c9a6f5" opacity="0.55"/>
+<rect x="590" y="1323" width="10" height="243" fill="#3a2266" opacity="0.6"/>
+<rect x="600" y="1292" width="60" height="288" fill="#7a4fc0"/>
+<rect x="608" y="1306" width="14" height="268" fill="#a97ce8" opacity="0.55"/>
+<rect x="650" y="1298" width="10" height="268" fill="#432a72" opacity="0.6"/>
+<rect x="631" y="1222" width="23" height="80" fill="#6a3fae"/>
+<rect x="634" y="1226" width="5" height="70" fill="#B98CF0" opacity="0.6"/>
+<rect x="660" y="1224" width="60" height="356" fill="#5A3AA0"/>
+<rect x="678" y="1238" width="14" height="336" fill="#c9a6f5" opacity="0.55"/>
+<rect x="710" y="1230" width="10" height="336" fill="#3a2266" opacity="0.6"/>
+<rect x="688" y="1168" width="22" height="66" fill="#5A3AA0"/>
+<rect x="691" y="1172" width="5" height="56" fill="#B98CF0" opacity="0.6"/>
+<rect x="720" y="1377" width="60" height="203" fill="#6a3fae"/>
+<rect x="733" y="1391" width="14" height="183" fill="#a97ce8" opacity="0.55"/>
+<rect x="770" y="1383" width="10" height="183" fill="#432a72" opacity="0.6"/>
+<rect x="756" y="1332" width="20" height="55" fill="#5A3AA0"/>
+<rect x="759" y="1336" width="5" height="45" fill="#c9a6f5" opacity="0.6"/>
+<rect x="780" y="1397" width="60" height="183" fill="#5A3AA0"/>
+<rect x="793" y="1411" width="14" height="163" fill="#B98CF0" opacity="0.55"/>
+<rect x="830" y="1403" width="10" height="163" fill="#3a2266" opacity="0.6"/>
+<rect x="840" y="1192" width="60" height="388" fill="#6a3fae"/>
+<rect x="848" y="1206" width="14" height="368" fill="#a97ce8" opacity="0.55"/>
+<rect x="890" y="1198" width="10" height="368" fill="#3a2266" opacity="0.6"/>
+<rect x="864" y="1139" width="21" height="63" fill="#5A3AA0"/>
+<rect x="867" y="1143" width="5" height="53" fill="#c9a6f5" opacity="0.6"/>
+<rect x="360" y="1476" width="60" height="104" fill="#4c7a2f"/>
+<rect x="368" y="1482" width="44" height="10" fill="#8fd94c" opacity="0.6"/>
+<rect x="420" y="1459" width="60" height="121" fill="#4c7a2f"/>
+<rect x="428" y="1465" width="44" height="10" fill="#8fd94c" opacity="0.6"/>
+<rect x="480" y="1462" width="60" height="118" fill="#4c7a2f"/>
+<rect x="488" y="1468" width="44" height="10" fill="#8fd94c" opacity="0.6"/>
+  </g>
+
+  <!-- destellos mágicos -->
+  <g fill="#ffffff" opacity="0.85">
+    <polygon points="250,650 254,662 266,666 254,670 250,682 246,670 234,666 246,662" opacity="0.7"/>
+    <polygon points="660,520 663,529 672,532 663,535 660,544 657,535 648,532 657,529" opacity="0.6"/>
+    <polygon points="520,780 523,789 532,792 523,795 520,804 517,795 508,792 517,789" opacity="0.55"/>
+    <polygon points="360,900 363,908 371,911 363,914 360,922 357,914 349,911 357,908" opacity="0.6"/>
+  </g>
 </svg>
+<div class="grain"></div>
 
 <div class="content">
 
 <nav>
   <div class="logo">Nex<span>Nord</span></div>
   <div class="nav-links">
-    <a href="#nexnord">El Reino</a>
     <a href="#rangos">Rangos</a>
     <a href="#coins">Coins</a>
-    <a href="#fondos">Fondos</a>
     <a href="#equipo">Equipo</a>
     <a href="#" class="nav-cta">Discord</a>
   </div>
@@ -431,38 +1020,6 @@
 </section>
 
 <!-- ================= ABOUT ================= -->
-<section class="chamber" id="nexnord">
-  <div class="chamber-head reveal-up">
-    <div class="eyebrow">El reino</div>
-    <h2>Bienvenido a NexNord</h2>
-    <p>Un servidor construido sobre hielo antiguo y auroras que nunca se apagan. Aquí, cada rango que reclamas no es solo un beneficio: es un título que se gana escalando la jerarquía del norte.</p>
-  </div>
-  <div class="about-grid">
-    <div class="about-card reveal-up">
-      <p>NexNord combina survival competitivo con una economía cuidada y una comunidad activa en Discord. Los rangos desbloquean ventajas reales dentro del juego: desde kits de inicio hasta acceso a zonas y comandos exclusivos.</p>
-      <p>Todo lo que compras aquí se activa manualmente para evitar fraudes: pagas, envías tu comprobante por ticket, y nuestro equipo te lo entrega en minutos.</p>
-      <div class="stat-row">
-        <div class="stat"><b>5</b><span>Rangos disponibles</span></div>
-        <div class="stat"><b>500</b><span>Coins por recarga</span></div>
-        <div class="stat"><b>24/7</b><span>Soporte en Discord</span></div>
-      </div>
-    </div>
-    <div class="about-visual reveal-up" id="aboutVisual">
-      <svg viewBox="0 0 400 400" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <rect width="400" height="400" fill="#0A1526"/>
-        <g id="aboutMountains">
-          <polygon points="0,400 0,260 90,150 180,270 260,180 400,290 400,400" fill="#132a44"/>
-          <polygon points="0,400 0,320 130,220 230,320 320,240 400,330 400,400" fill="#1b3a5c"/>
-        </g>
-        <g id="aboutCrystal" transform="translate(200,210)">
-          <polygon points="0,-70 34,0 0,70 -34,0" fill="none" stroke="#7FE3FF" stroke-width="2"/>
-          <polygon points="0,-40 20,0 0,40 -20,0" fill="#7FE3FF" opacity="0.35"/>
-        </g>
-      </svg>
-    </div>
-  </div>
-</section>
-
 <!-- ================= RANGOS ================= -->
 <section class="chamber" id="rangos">
   <div class="chamber-head reveal-up">
@@ -473,7 +1030,7 @@
 
   <div class="rank-track">
 
-    <div class="rank-card reveal-scale" style="--tier-color:#B7C4D6; --tier-glow:rgba(183,196,214,.5);">
+    <div class="rank-card reveal-scale pixel-corners" style="--tier-color:#B7C4D6; --tier-glow:rgba(183,196,214,.5);">
       <svg class="rank-crest" viewBox="0 0 100 100"><rect x="30" y="15" width="40" height="35" fill="#B7C4D6"/><rect x="20" y="50" width="60" height="14" fill="#8FA0B5"/><rect x="40" y="64" width="20" height="20" fill="#8FA0B5"/><rect x="42" y="25" width="6" height="6" fill="#0A1526"/><rect x="52" y="25" width="6" height="6" fill="#0A1526"/></svg>
       <div class="rank-info">
         <div class="rank-name">Knight <span class="rank-tier-tag">Tier I</span></div>
@@ -481,23 +1038,23 @@
       </div>
       <div class="rank-price">
         <span class="amount">$5 USD</span>
-        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/P955NZ63LDY3J" target="_blank" rel="noopener">Comprar Knight</a>
+        <button class="rank-buy" onclick="openClaimModal('knight','Rango Knight','$5 USD','https://www.paypal.com/ncp/payment/P955NZ63LDY3J')">Comprar Knight</button>
       </div>
     </div>
 
-    <div class="rank-card reveal-scale" style="--tier-color:#7FE3FF; --tier-glow:rgba(127,227,255,.5); margin-left:2%;">
-      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="20" width="50" height="30" fill="#7FE3FF"/><rect x="15" y="50" width="70" height="12" fill="#4FB6D6"/><rect x="35" y="62" width="30" height="22" fill="#4FB6D6"/><polygon points="50,10 60,20 40,20" fill="#7FE3FF"/></svg>
+    <div class="rank-card reveal-scale pixel-corners" style="--tier-color:#8FE9FF; --tier-glow:rgba(127,227,255,.5); margin-left:2%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="20" width="50" height="30" fill="#8FE9FF"/><rect x="15" y="50" width="70" height="12" fill="#4FB6D6"/><rect x="35" y="62" width="30" height="22" fill="#4FB6D6"/><polygon points="50,10 60,20 40,20" fill="#8FE9FF"/></svg>
       <div class="rank-info">
         <div class="rank-name">Lord <span class="rank-tier-tag">Tier II</span></div>
         <p>Más beneficios, más recompensas y una mejor experiencia desde el inicio de tu aventura.</p>
       </div>
       <div class="rank-price">
         <span class="amount">$10 USD</span>
-        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/RMG5XF5GTFPX6" target="_blank" rel="noopener">Comprar Lord</a>
+        <button class="rank-buy" onclick="openClaimModal('lord','Rango Lord','$10 USD','https://www.paypal.com/ncp/payment/RMG5XF5GTFPX6')">Comprar Lord</button>
       </div>
     </div>
 
-    <div class="rank-card reveal-scale" style="--tier-color:#6FFFB0; --tier-glow:rgba(111,255,176,.5); margin-left:4%;">
+    <div class="rank-card reveal-scale pixel-corners" style="--tier-color:#6FFFB0; --tier-glow:rgba(111,255,176,.5); margin-left:4%;">
       <svg class="rank-crest" viewBox="0 0 100 100"><rect x="20" y="45" width="24" height="8" fill="#6FFFB0" transform="rotate(45 32 49)"/><rect x="56" y="45" width="24" height="8" fill="#6FFFB0" transform="rotate(-45 68 49)"/><rect x="46" y="20" width="8" height="60" fill="#4FCF8C"/></svg>
       <div class="rank-info">
         <div class="rank-name">Paladin <span class="rank-tier-tag">Tier III</span></div>
@@ -505,31 +1062,31 @@
       </div>
       <div class="rank-price">
         <span class="amount">$14 USD</span>
-        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/37D92CRVPNWZ8" target="_blank" rel="noopener">Comprar Paladin</a>
+        <button class="rank-buy" onclick="openClaimModal('paladin','Rango Paladin','$14 USD','https://www.paypal.com/ncp/payment/37D92CRVPNWZ8')">Comprar Paladin</button>
       </div>
     </div>
 
-    <div class="rank-card reveal-scale" style="--tier-color:#B18CFF; --tier-glow:rgba(177,140,255,.5); margin-left:6%;">
-      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="45" width="50" height="30" fill="#B18CFF"/><polygon points="25,45 32,20 42,40 50,15 58,40 68,20 75,45" fill="#B18CFF"/><rect x="45" y="30" width="10" height="10" fill="#F4C95D"/></svg>
+    <div class="rank-card reveal-scale pixel-corners" style="--tier-color:#B18CFF; --tier-glow:rgba(177,140,255,.5); margin-left:6%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="25" y="45" width="50" height="30" fill="#B18CFF"/><polygon points="25,45 32,20 42,40 50,15 58,40 68,20 75,45" fill="#B18CFF"/><rect x="45" y="30" width="10" height="10" fill="#FFD166"/></svg>
       <div class="rank-info">
         <div class="rank-name">Duke <span class="rank-tier-tag">Tier IV</span></div>
         <p>Prestigio, beneficios premium y acceso a recompensas exclusivas reservadas para la nobleza.</p>
       </div>
       <div class="rank-price">
         <span class="amount">$20 USD</span>
-        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/H6SKZTWZE44E6" target="_blank" rel="noopener">Comprar Duke</a>
+        <button class="rank-buy" onclick="openClaimModal('duke','Rango Duke','$20 USD','https://www.paypal.com/ncp/payment/H6SKZTWZE44E6')">Comprar Duke</button>
       </div>
     </div>
 
-    <div class="rank-card reveal-scale" style="--tier-color:#F4C95D; --tier-glow:rgba(244,201,93,.55); margin-left:8%;">
-      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="22" y="48" width="56" height="28" fill="#F4C95D"/><polygon points="22,48 30,22 42,42 50,18 58,42 70,22 78,48" fill="#F4C95D"/><rect x="46" y="30" width="8" height="8" fill="#8B1E1E"/><rect x="28" y="34" width="6" height="6" fill="#2E7FD1"/><rect x="66" y="34" width="6" height="6" fill="#2E7FD1"/></svg>
+    <div class="rank-card reveal-scale pixel-corners" style="--tier-color:#FFD166; --tier-glow:rgba(244,201,93,.55); margin-left:8%;">
+      <svg class="rank-crest" viewBox="0 0 100 100"><rect x="22" y="48" width="56" height="28" fill="#FFD166"/><polygon points="22,48 30,22 42,42 50,18 58,42 70,22 78,48" fill="#FFD166"/><rect x="46" y="30" width="8" height="8" fill="#8B1E1E"/><rect x="28" y="34" width="6" height="6" fill="#2E7FD1"/><rect x="66" y="34" width="6" height="6" fill="#2E7FD1"/></svg>
       <div class="rank-info">
         <div class="rank-name">King <span class="rank-tier-tag">Tier V · Máximo</span></div>
         <p>Nuestro rango más alto, diseñado para quienes quieren dominar NexNord desde el primer día.</p>
       </div>
       <div class="rank-price">
         <span class="amount">$25 USD</span>
-        <a class="rank-buy" href="https://www.paypal.com/ncp/payment/E4RZTNY2MN28C" target="_blank" rel="noopener">Comprar King</a>
+        <button class="rank-buy" onclick="openClaimModal('king','Rango King','$25 USD','https://www.paypal.com/ncp/payment/E4RZTNY2MN28C')">Comprar King</button>
       </div>
     </div>
 
@@ -558,9 +1115,9 @@
     <h2>Recarga de Coins</h2>
     <p>La moneda del reino para comerciar, mejorar y crecer dentro de NexNord.</p>
   </div>
-  <div class="coin-card reveal-scale">
+  <div class="coin-card reveal-scale pixel-corners">
     <div class="coin-left">
-      <svg class="coin-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#F4C95D" stroke-width="6"/><circle cx="50" cy="50" r="24" fill="#F4C95D" opacity="0.25"/><rect x="44" y="30" width="12" height="40" fill="#F4C95D"/></svg>
+      <svg class="coin-icon" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#FFD166" stroke-width="6"/><circle cx="50" cy="50" r="24" fill="#FFD166" opacity="0.25"/><rect x="44" y="30" width="12" height="40" fill="#FFD166"/></svg>
       <div>
         <h3>500 Coins</h3>
         <p>Ideal para comprar en tiendas de jugadores, subastas del servidor o mejoras dentro del juego. Recarga instantánea tras confirmar tu pago.</p>
@@ -568,7 +1125,7 @@
     </div>
     <div style="text-align:right;">
       <div class="coin-price">$5 USD</div>
-      <a class="btn btn-gold" style="margin-top:14px;" href="https://www.paypal.com/ncp/payment/88ABVUVG4RPM4" target="_blank" rel="noopener">Comprar Coins</a>
+      <button class="btn btn-gold" style="margin-top:14px;" onclick="openClaimModal('coins500','500 Coins','$5 USD','https://www.paypal.com/ncp/payment/88ABVUVG4RPM4')">Comprar Coins</button>
     </div>
   </div>
   <div class="claim-box reveal-up">
@@ -587,53 +1144,6 @@
   </div>
 </section>
 
-<!-- ================= FONDOS ================= -->
-<section class="chamber" id="fondos">
-  <div class="chamber-head reveal-up">
-    <div class="eyebrow">Extras</div>
-    <h2>Fondos de NexNord</h2>
-    <p>Wallpapers originales inspirados en el reino helado, listos para tu escritorio o tu celular. Descarga gratis.</p>
-  </div>
-  <div class="wall-grid">
-
-    <div class="wall-card reveal-scale">
-      <svg viewBox="0 0 400 300" id="wall1" xmlns="http://www.w3.org/2000/svg">
-        <rect width="400" height="300" fill="#0A1526"/>
-        <polygon points="0,300 0,180 70,90 150,190 220,110 300,200 400,140 400,300" fill="#12314f"/>
-        <polygon points="0,300 0,230 100,170 200,240 300,180 400,230 400,300" fill="#1c4a72"/>
-        <g opacity="0.5"><path d="M0,60 Q100,20 200,50 T400,40" stroke="#7FE3FF" stroke-width="10" fill="none"/></g>
-        <g opacity="0.4"><path d="M0,90 Q120,130 220,90 T400,100" stroke="#B18CFF" stroke-width="8" fill="none"/></g>
-      </svg>
-      <div class="wall-meta"><span>Aurora Boreal</span><button class="wall-dl" onclick="downloadSVG('wall1','nexnord-aurora.svg')">Descargar</button></div>
-    </div>
-
-    <div class="wall-card reveal-scale">
-      <svg viewBox="0 0 400 300" id="wall2" xmlns="http://www.w3.org/2000/svg">
-        <rect width="400" height="300" fill="#081120"/>
-        <rect x="150" y="90" width="100" height="120" fill="#1b3a5c"/>
-        <rect x="130" y="60" width="30" height="60" fill="#1b3a5c"/>
-        <rect x="240" y="60" width="30" height="60" fill="#1b3a5c"/>
-        <polygon points="130,60 145,35 160,60" fill="#274d75"/>
-        <polygon points="240,60 255,35 270,60" fill="#274d75"/>
-        <rect x="185" y="140" width="30" height="70" fill="#0A1526"/>
-        <polygon points="0,300 0,240 400,240 400,300" fill="#0d2136"/>
-      </svg>
-      <div class="wall-meta"><span>Castillo Helado</span><button class="wall-dl" onclick="downloadSVG('wall2','nexnord-castillo.svg')">Descargar</button></div>
-    </div>
-
-    <div class="wall-card reveal-scale">
-      <svg viewBox="0 0 400 300" id="wall3" xmlns="http://www.w3.org/2000/svg">
-        <rect width="400" height="300" fill="#050d18"/>
-        <polygon points="200,40 250,150 200,260 150,150" fill="#7FE3FF" opacity="0.5"/>
-        <polygon points="200,80 230,150 200,220 170,150" fill="#EAF2FA" opacity="0.6"/>
-        <polygon points="90,110 115,180 90,250 65,180" fill="#B18CFF" opacity="0.4"/>
-        <polygon points="310,110 335,180 310,250 285,180" fill="#6FFFB0" opacity="0.4"/>
-      </svg>
-      <div class="wall-meta"><span>Cueva de Cristal</span><button class="wall-dl" onclick="downloadSVG('wall3','nexnord-cristal.svg')">Descargar</button></div>
-    </div>
-
-  </div>
-</section>
 
 <!-- ================= EQUIPO ================= -->
 <section class="chamber" id="equipo">
@@ -643,22 +1153,22 @@
     <p>Las personas detrás de NexNord, siempre disponibles para ayudarte con tu compra.</p>
   </div>
   <div class="team-grid">
-    <div class="team-card reveal-up">
-      <div class="team-avatar" style="background:rgba(244,201,93,.15); color:#F4C95D;">X</div>
+    <div class="team-card reveal-up pixel-corners">
+      <div class="team-avatar" style="background:rgba(244,201,93,.15); color:#FFD166;">X</div>
       <div class="team-role">Owner</div>
       <div class="team-name">Xpen</div>
     </div>
-    <div class="team-card reveal-up">
-      <div class="team-avatar" style="background:rgba(127,227,255,.15); color:#7FE3FF;">H</div>
+    <div class="team-card reveal-up pixel-corners">
+      <div class="team-avatar" style="background:rgba(127,227,255,.15); color:#8FE9FF;">H</div>
       <div class="team-role">Co-Owner</div>
       <div class="team-name">Harlex_fx</div>
     </div>
-    <div class="team-card reveal-up">
+    <div class="team-card reveal-up pixel-corners">
       <div class="team-avatar" style="background:rgba(111,255,176,.15); color:#6FFFB0;">H</div>
       <div class="team-role">Soporte</div>
       <div class="team-name">Harlex_fx</div>
     </div>
-    <div class="team-card reveal-up">
+    <div class="team-card reveal-up pixel-corners">
       <div class="team-avatar" style="background:rgba(177,140,255,.15); color:#B18CFF;">J</div>
       <div class="team-role">Soporte</div>
       <div class="team-name">JaredEu</div>
@@ -672,11 +1182,35 @@
   <div class="foot-links">
     <a href="#rangos">Rangos</a>
     <a href="#coins">Coins</a>
-    <a href="#fondos">Fondos</a>
     <a href="#">Discord</a>
   </div>
   <div class="fine">© 2026 NexNord — Reino del hielo eterno.</div>
 </footer>
+
+
+<!-- ================= MODAL DE RECLAMO ================= -->
+<div class="claim-overlay" id="claimOverlay">
+  <div class="claim-modal pixel-corners">
+    <button class="claim-close" onclick="closeClaimModal()">✕</button>
+    <h3 id="claimTitle">Rango Knight</h3>
+    <div class="claim-price" id="claimPrice">$5 USD</div>
+
+    <div class="claim-note">
+      Escribe tu nick de Minecraft y el correo con el que vas a pagar en PayPal.
+      Al confirmar el pago, tu compra se entrega sola en el servidor — sin tickets, sin esperas.
+    </div>
+
+    <div class="claim-error" id="claimError">Revisa los datos, algo no está bien.</div>
+
+    <label for="claimNick">Nick de Minecraft</label>
+    <input type="text" id="claimNick" placeholder="Ej: Steve123" maxlength="16" autocomplete="off">
+
+    <label for="claimEmail">Correo de tu cuenta de PayPal</label>
+    <input type="email" id="claimEmail" placeholder="tucorreo@ejemplo.com" autocomplete="off">
+
+    <button class="btn btn-primary claim-submit" id="claimSubmitBtn" onclick="submitClaim()">Continuar a pagar ⟶</button>
+  </div>
+</div>
 
 </div>
 
@@ -718,18 +1252,16 @@ if(!prefersReduced){
   }
 }
 
-/* Aurora parallax spine across whole page */
-gsap.to('#auroraPath1', {
-  attr:{ d:"M0,40 Q400,-60 800,60 T1600,20 L1600,0 L0,0 Z" },
-  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.2 }
-});
-gsap.to('#auroraPath2', {
-  attr:{ d:"M0,200 Q500,340 900,260 T1600,220 L1600,3600 L0,3600 Z" },
-  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.2 }
-});
-gsap.to('#aurora-canvas', {
-  y: -300,
+/* Cave background: leve parallax vertical mientras se hace scroll */
+gsap.to('#cave-bg', {
+  y: -220,
+  scale: 1.06,
+  transformOrigin:'50% 30%',
   scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1 }
+});
+gsap.to('#vines', {
+  y: 14,
+  scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.4 }
 });
 
 /* Generic scale-reveal on scroll — images/cards expand smoothly */
@@ -754,20 +1286,6 @@ document.querySelectorAll('.reveal-up').forEach((el)=>{
   });
 });
 
-/* Wallpaper images expand further as user scrolls past them (parallax zoom) */
-document.querySelectorAll('.wall-card svg').forEach((svg)=>{
-  gsap.fromTo(svg, {scale:1}, {
-    scale:1.14,
-    ease:'none',
-    scrollTrigger:{
-      trigger: svg.closest('.wall-card'),
-      start:'top bottom',
-      end:'bottom top',
-      scrub:1
-    }
-  });
-});
-
 /* Rank crest crystals pulse/expand as revealed */
 document.querySelectorAll('.rank-crest').forEach((crest)=>{
   gsap.fromTo(crest, {scale:0.5, rotate:-8}, {
@@ -776,32 +1294,73 @@ document.querySelectorAll('.rank-crest').forEach((crest)=>{
   });
 });
 
-/* About visual mountains parallax */
-gsap.to('#aboutMountains', {
-  y: -18,
-  scrollTrigger:{ trigger:'#aboutVisual', start:'top bottom', end:'bottom top', scrub:1 }
-});
-gsap.to('#aboutCrystal', {
-  y: 14, rotate: 8,
-  scrollTrigger:{ trigger:'#aboutVisual', start:'top bottom', end:'bottom top', scrub:1 }
-});
+/* ===== Modal de reclamo: captura nick + correo antes de ir a PayPal ===== */
 
-/* Download helper for wallpaper SVGs */
-function downloadSVG(id, filename){
-  const svg = document.getElementById(id);
-  const serializer = new XMLSerializer();
-  let source = serializer.serializeToString(svg);
-  if(!source.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)){
-    source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
-  }
-  const blob = new Blob([source], {type:'image/svg+xml;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename;
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+// Cambia esto por la URL real de tu servicio en Render una vez desplegado.
+const WEBHOOK_BASE = 'https://plugin-web.onrender.com';
+
+const NICK_REGEX = /^[A-Za-z0-9_]{3,16}$/;
+let pendingClaim = null;
+
+function openClaimModal(productId, label, price, paypalUrl) {
+  pendingClaim = { productId, paypalUrl };
+  document.getElementById('claimTitle').textContent = label;
+  document.getElementById('claimPrice').textContent = price;
+  document.getElementById('claimNick').value = '';
+  document.getElementById('claimEmail').value = '';
+  document.getElementById('claimError').style.display = 'none';
+  document.getElementById('claimOverlay').classList.add('open');
 }
+
+function closeClaimModal() {
+  document.getElementById('claimOverlay').classList.remove('open');
+  pendingClaim = null;
+}
+
+function showClaimError(msg) {
+  const el = document.getElementById('claimError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function submitClaim() {
+  const nick = document.getElementById('claimNick').value.trim();
+  const email = document.getElementById('claimEmail').value.trim();
+
+  if (!NICK_REGEX.test(nick)) {
+    showClaimError('El nick debe tener entre 3 y 16 caracteres (letras, números o guion bajo).');
+    return;
+  }
+  if (!email.includes('@') || email.length < 5) {
+    showClaimError('Escribe un correo válido, el mismo con el que vas a pagar en PayPal.');
+    return;
+  }
+  if (!pendingClaim) return;
+
+  const btn = document.getElementById('claimSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  try {
+    const res = await fetch(`${WEBHOOK_BASE}/claim/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nick, email, productId: pendingClaim.productId })
+    });
+    if (!res.ok) throw new Error('bad status');
+
+    // Todo guardado: ahora sí mandamos a pagar a PayPal
+    window.location.href = pendingClaim.paypalUrl;
+  } catch (e) {
+    showClaimError('No se pudo conectar con el servidor. Intenta de nuevo en unos segundos.');
+    btn.disabled = false;
+    btn.textContent = 'Continuar a pagar ⟶';
+  }
+}
+
+document.getElementById('claimOverlay').addEventListener('click', (e) => {
+  if (e.target.id === 'claimOverlay') closeClaimModal();
+});
 </script>
 </body>
 </html>
