@@ -1038,7 +1038,7 @@
       </div>
       <div class="rank-price">
         <span class="amount">$5 USD</span>
-        <button class="rank-buy" onclick="openClaimModal('knight','Rango Knight','$5 USD','https://www.paypal.com/ncp/payment/P955NZ63LDY3J')">Comprar Knight</button>
+        <button class="rank-buy" onclick="openClaimModal('knight','Rango Knight','$5 USD')">Comprar Knight</button>
       </div>
     </div>
 
@@ -1050,7 +1050,7 @@
       </div>
       <div class="rank-price">
         <span class="amount">$10 USD</span>
-        <button class="rank-buy" onclick="openClaimModal('lord','Rango Lord','$10 USD','https://www.paypal.com/ncp/payment/RMG5XF5GTFPX6')">Comprar Lord</button>
+        <button class="rank-buy" onclick="openClaimModal('lord','Rango Lord','$10 USD')">Comprar Lord</button>
       </div>
     </div>
 
@@ -1062,7 +1062,7 @@
       </div>
       <div class="rank-price">
         <span class="amount">$14 USD</span>
-        <button class="rank-buy" onclick="openClaimModal('paladin','Rango Paladin','$14 USD','https://www.paypal.com/ncp/payment/37D92CRVPNWZ8')">Comprar Paladin</button>
+        <button class="rank-buy" onclick="openClaimModal('paladin','Rango Paladin','$14 USD')">Comprar Paladin</button>
       </div>
     </div>
 
@@ -1074,7 +1074,7 @@
       </div>
       <div class="rank-price">
         <span class="amount">$20 USD</span>
-        <button class="rank-buy" onclick="openClaimModal('duke','Rango Duke','$20 USD','https://www.paypal.com/ncp/payment/H6SKZTWZE44E6')">Comprar Duke</button>
+        <button class="rank-buy" onclick="openClaimModal('duke','Rango Duke','$20 USD')">Comprar Duke</button>
       </div>
     </div>
 
@@ -1086,7 +1086,7 @@
       </div>
       <div class="rank-price">
         <span class="amount">$25 USD</span>
-        <button class="rank-buy" onclick="openClaimModal('king','Rango King','$25 USD','https://www.paypal.com/ncp/payment/E4RZTNY2MN28C')">Comprar King</button>
+        <button class="rank-buy" onclick="openClaimModal('king','Rango King','$25 USD')">Comprar King</button>
       </div>
     </div>
 
@@ -1095,15 +1095,15 @@
   <div class="claim-box reveal-up">
     <div class="claim-step">
       <div class="n">01</div>
-      <p><strong>Realiza el pago</strong> del rango elegido a través del botón correspondiente en PayPal.</p>
+      <p><strong>Escribe tu nick</strong> de Minecraft en el formulario al darle click a "Comprar".</p>
     </div>
     <div class="claim-step">
       <div class="n">02</div>
-      <p><strong>Toma una captura</strong> de pantalla clara del comprobante de pago una vez confirmado.</p>
+      <p><strong>Paga con PayPal</strong> directo en la ventana que se abre, sin salir de la web.</p>
     </div>
     <div class="claim-step">
       <div class="n">03</div>
-      <p><strong>Abre un ticket</strong> en nuestro Discord y envía la captura para que el equipo active tu rango.</p>
+      <p><strong>Listo</strong> — tu rango se entrega solo en el servidor, sin tickets ni esperas.</p>
     </div>
   </div>
 </section>
@@ -1125,7 +1125,7 @@
     </div>
     <div style="text-align:right;">
       <div class="coin-price">$5 USD</div>
-      <button class="btn btn-gold" style="margin-top:14px;" onclick="openClaimModal('coins500','500 Coins','$5 USD','https://www.paypal.com/ncp/payment/88ABVUVG4RPM4')">Comprar Coins</button>
+      <button class="btn btn-gold" style="margin-top:14px;" onclick="openClaimModal('coins500','500 Coins','$5 USD')">Comprar Coins</button>
     </div>
   </div>
   <div class="claim-box reveal-up">
@@ -1195,20 +1195,21 @@
     <h3 id="claimTitle">Rango Knight</h3>
     <div class="claim-price" id="claimPrice">$5 USD</div>
 
-    <div class="claim-note">
-      Escribe tu nick de Minecraft y el correo con el que vas a pagar en PayPal.
-      Al confirmar el pago, tu compra se entrega sola en el servidor — sin tickets, sin esperas.
+    <div class="claim-note" id="claimNote">
+      Escribe tu nick de Minecraft y dale click a PayPal para pagar. Tu compra se entrega sola en el servidor — sin tickets, sin esperas.
     </div>
 
     <div class="claim-error" id="claimError">Revisa los datos, algo no está bien.</div>
+    <div class="claim-success" id="claimSuccess">✅ ¡Pago confirmado! Tu compra ya se entregó en el servidor.</div>
 
-    <label for="claimNick">Nick de Minecraft</label>
-    <input type="text" id="claimNick" placeholder="Ej: Steve123" maxlength="16" autocomplete="off">
+    <div id="claimFormWrap">
+      <label for="claimNick">Nick de Minecraft</label>
+      <input type="text" id="claimNick" placeholder="Ej: Steve123" maxlength="16" autocomplete="off">
 
-    <label for="claimEmail">Correo de tu cuenta de PayPal</label>
-    <input type="email" id="claimEmail" placeholder="tucorreo@ejemplo.com" autocomplete="off">
+      <button class="btn btn-primary claim-submit" id="claimSubmitBtn" onclick="confirmNick()">Continuar ⟶</button>
+    </div>
 
-    <button class="btn btn-primary claim-submit" id="claimSubmitBtn" onclick="submitClaim()">Continuar a pagar ⟶</button>
+    <div id="paypal-button-container"></div>
   </div>
 </div>
 
@@ -1216,13 +1217,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AeQHG4z9dIERAM-GBFFYnjGjR_tlRBSOrbiMGI_OEwtAyW-CT3Zft0qGjzy5PN1J4fcqJEFt0tokLpnh&currency=USD"></script>
 <script>
 gsap.registerPlugin(ScrollTrigger);
 
-// respect reduced motion
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Hero entrance */
 gsap.timeline({defaults:{ease:'power3.out'}})
   .to('#heroTitle', {opacity:1, y:0, duration:1}, 0.1)
   .fromTo('#heroTitle', {y:40}, {y:0, duration:1}, 0.1)
@@ -1231,7 +1231,6 @@ gsap.timeline({defaults:{ease:'power3.out'}})
   .to('#heroActions', {opacity:1, y:0, duration:.8}, 0.55)
   .fromTo('#heroActions', {y:24}, {y:0, duration:.8}, 0.55);
 
-/* floating shards in hero */
 if(!prefersReduced){
   for(let i=0;i<10;i++){
     const s = document.createElement('div');
@@ -1252,7 +1251,6 @@ if(!prefersReduced){
   }
 }
 
-/* Cave background: leve parallax vertical mientras se hace scroll */
 gsap.to('#cave-bg', {
   y: -220,
   scale: 1.06,
@@ -1264,7 +1262,6 @@ gsap.to('#vines', {
   scrollTrigger:{ trigger: document.body, start:'top top', end:'bottom bottom', scrub:1.4 }
 });
 
-/* Generic scale-reveal on scroll — images/cards expand smoothly */
 document.querySelectorAll('.reveal-scale').forEach((el)=>{
   gsap.fromTo(el, {scale:0.82, opacity:0, y:40}, {
     scale:1, opacity:1, y:0,
@@ -1278,7 +1275,6 @@ document.querySelectorAll('.reveal-scale').forEach((el)=>{
   });
 });
 
-/* Fade-up for text blocks */
 document.querySelectorAll('.reveal-up').forEach((el)=>{
   gsap.fromTo(el, {opacity:0, y:36}, {
     opacity:1, y:0, duration:1, ease:'power2.out',
@@ -1286,7 +1282,6 @@ document.querySelectorAll('.reveal-up').forEach((el)=>{
   });
 });
 
-/* Rank crest crystals pulse/expand as revealed */
 document.querySelectorAll('.rank-crest').forEach((crest)=>{
   gsap.fromTo(crest, {scale:0.5, rotate:-8}, {
     scale:1, rotate:0, duration:.8, ease:'back.out(1.7)',
@@ -1294,27 +1289,41 @@ document.querySelectorAll('.rank-crest').forEach((crest)=>{
   });
 });
 
-/* ===== Modal de reclamo: captura nick + correo antes de ir a PayPal ===== */
+/* About visual mountains parallax */
+gsap.to('#aboutMountains', {
+  y: -18,
+  scrollTrigger:{ trigger:'#aboutVisual', start:'top bottom', end:'bottom top', scrub:1 }
+});
 
-// Cambia esto por la URL real de tu servicio en Render una vez desplegado.
+/* ===== Modal de reclamo: nick + boton real de PayPal (ligado a tu app) ===== */
+
 const WEBHOOK_BASE = 'https://plugin-web.onrender.com';
-
 const NICK_REGEX = /^[A-Za-z0-9_]{3,16}$/;
-let pendingClaim = null;
 
-function openClaimModal(productId, label, price, paypalUrl) {
-  pendingClaim = { productId, paypalUrl };
+let pendingProduct = null;
+let buttonsRendered = false;
+
+function resetModalUI() {
+  document.getElementById('claimError').style.display = 'none';
+  document.getElementById('claimSuccess').style.display = 'none';
+  document.getElementById('claimFormWrap').style.display = 'block';
+  document.getElementById('paypal-button-container').innerHTML = '';
+  document.getElementById('claimNote').style.display = 'block';
+  buttonsRendered = false;
+}
+
+function openClaimModal(productId, label, price) {
+  pendingProduct = { productId, label, price };
   document.getElementById('claimTitle').textContent = label;
   document.getElementById('claimPrice').textContent = price;
   document.getElementById('claimNick').value = '';
-  document.getElementById('claimEmail').value = '';
-  document.getElementById('claimError').style.display = 'none';
+  resetModalUI();
   document.getElementById('claimOverlay').classList.add('open');
 }
 
 function closeClaimModal() {
   document.getElementById('claimOverlay').classList.remove('open');
-  pendingClaim = null;
+  pendingProduct = null;
 }
 
 function showClaimError(msg) {
@@ -1323,39 +1332,56 @@ function showClaimError(msg) {
   el.style.display = 'block';
 }
 
-async function submitClaim() {
+function confirmNick() {
   const nick = document.getElementById('claimNick').value.trim();
-  const email = document.getElementById('claimEmail').value.trim();
 
   if (!NICK_REGEX.test(nick)) {
     showClaimError('El nick debe tener entre 3 y 16 caracteres (letras, números o guion bajo).');
     return;
   }
-  if (!email.includes('@') || email.length < 5) {
-    showClaimError('Escribe un correo válido, el mismo con el que vas a pagar en PayPal.');
-    return;
-  }
-  if (!pendingClaim) return;
+  if (!pendingProduct) return;
 
-  const btn = document.getElementById('claimSubmitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Guardando...';
+  document.getElementById('claimError').style.display = 'none';
+  document.getElementById('claimFormWrap').style.display = 'none';
+  document.getElementById('claimNote').style.display = 'none';
 
-  try {
-    const res = await fetch(`${WEBHOOK_BASE}/claim/start`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nick, email, productId: pendingClaim.productId })
-    });
-    if (!res.ok) throw new Error('bad status');
+  if (buttonsRendered) return;
+  buttonsRendered = true;
 
-    // Todo guardado: ahora sí mandamos a pagar a PayPal
-    window.location.href = pendingClaim.paypalUrl;
-  } catch (e) {
-    showClaimError('No se pudo conectar con el servidor. Intenta de nuevo en unos segundos.');
-    btn.disabled = false;
-    btn.textContent = 'Continuar a pagar ⟶';
-  }
+  paypal.Buttons({
+    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+
+    createOrder: async function () {
+      const res = await fetch(`${WEBHOOK_BASE}/orders/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: pendingProduct.productId, nick })
+      });
+      if (!res.ok) throw new Error('No se pudo crear la orden');
+      const data = await res.json();
+      return data.orderID;
+    },
+
+    onApprove: async function (data) {
+      try {
+        const res = await fetch(`${WEBHOOK_BASE}/orders/capture`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderID: data.orderID })
+        });
+        if (!res.ok) throw new Error('No se pudo confirmar el pago');
+
+        document.getElementById('paypal-button-container').innerHTML = '';
+        document.getElementById('claimSuccess').style.display = 'block';
+      } catch (e) {
+        showClaimError('El pago se realizó pero hubo un problema entregando la compra. Contáctanos por Discord con tu comprobante.');
+      }
+    },
+
+    onError: function (err) {
+      showClaimError('Hubo un problema con PayPal. Intenta de nuevo en unos segundos.');
+    }
+  }).render('#paypal-button-container');
 }
 
 document.getElementById('claimOverlay').addEventListener('click', (e) => {
